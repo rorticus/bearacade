@@ -1,0 +1,22 @@
+{
+  "name": "bearacade",
+  "version": "1.0.0",
+  "description": "Source Info:",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rorticus/bearacade.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rorticus/bearacade/issues"
+  },
+  "homepage": "https://github.com/rorticus/bearacade#readme",
+  "devDependencies": {
+    "typescript": "^2.6.2"
+  }
+}
