@@ -14,7 +14,7 @@ module.exports = {
     module: {
         rules: [
             {test: /\.ts$/, loader: 'ts-loader'},
-            {test: /\.jpg$/, loader: 'file-loader'}
+            {test: /\.(jpg|png)$/, loader: 'file-loader'}
         ]
     },
     plugins: [
