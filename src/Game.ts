@@ -1,62 +1,51 @@
-interface CameraCoordinate {
-    x?: number;
-    y?: number;
-    z?: number;
-    w?: number;
+enum Colors {
+    RoadDark = '#707270',
+    RoadLight = '#999799',
+    Sky = '#2798D1',
+    GrassDark = '#00A400',
+    GrassLight = '#00CC00',
+    EdgeDark = '#FF3500',
+    EdgeLight = '#FFFFFF',
+    RoadDivider = '#ffffff'
 }
 
-interface Coordinate {
-    world: CameraCoordinate;
-    camera?: CameraCoordinate;
-    screen?: CameraCoordinate;
-}
+declare const require: any;
 
-interface Segment {
-    index: number;
-    p1: Coordinate;
-    p2: Coordinate;
-    color: string;
+interface RenderConfig {
+    fov: number;
+    cameraHeight: number;
+    roadWidth: number;
+    segmentMultiplier: number;
+    edgeThickness: number;
+    dividerThickness: number;
 }
-
-const COLORS = {
-    DARK: '#333333',
-    LIGHT: '#eeeeee'
-};
 
 export class Game {
     fps = 60;
-    step = 1 / 60;
-    width = 1024;
-    height = 768;
-    segments: Segment[];
-    canvas: HTMLCanvasElement;
-    context: any;
-    roadWidth = 2000;
-    segmentLength = 200;
-    rumbleLength = 3;
-    trackLength = null;
-    lanes = 3;
-    fieldOfView = 100;
-    cameraHeight = 1000;
-    cameraDepth = null;
-    drawDistance = 300;
-    playerX = 0;
-    playerZ = null;
-    fogDensity = 5;
-    position = 0;
-    speed = 0;
-    maxSpeed = this.segmentLength / this.step;
-    accel = this.maxSpeed / 5;
-    breaking = this.maxSpeed;
-    decel = -this.maxSpeed / 5;
-    offRoadDecel = -this.maxSpeed / 2;
-    offRoadLimit = this.maxSpeed / 4;
-    keyLeft: boolean;
-    keyRight: boolean;
-    keyFaster: boolean;
-    keySlower: boolean;
+    step = 1 / this.fps;
 
-    start() {
+    context: CanvasRenderingContext2D;
+    width = 640;
+    height = 480;
+    position = 0;
+
+    private _renderConfig: RenderConfig = {
+        fov: 60,
+        cameraHeight: 150,
+        roadWidth: 400,
+        segmentMultiplier: 14,
+        edgeThickness: 0.05,
+        dividerThickness: 0.025
+    };
+
+    private _zMap: any;
+    private _assets = {
+        background: require('./assets/furtherest-background.jpg')
+    };
+
+    async start() {
+        this._buildZMap();
+
         let last = Date.now();
         let gdt = 0;
 
@@ -80,27 +69,7 @@ export class Game {
     }
 
     private update(deltaInSeconds: number) {
-        this.position = this.position + deltaInSeconds * this.speed;
-
-        const dx = deltaInSeconds * 2 * (this.speed / this.maxSpeed);
-
-        if (this.keyLeft) {
-            this.playerX = this.playerX - dx;
-        } else if (this.keyRight) {
-            this.playerX = this.playerX + dx;
-        }
-
-        if (this.keyFaster) {
-            this.speed += this.accel * deltaInSeconds;
-        } else if (this.keySlower) {
-            this.speed += this.breaking * deltaInSeconds;
-        } else {
-            this.speed += this.decel * deltaInSeconds;
-        }
-
-        if ((this.playerX < 01 || this.playerX > 1) && (this.speed > this.offRoadLimit)) {
-            this.speed += this.offRoadDecel * deltaInSeconds;
-        }
+        this.position += 0.01;
     }
 
     private render() {
@@ -108,63 +77,48 @@ export class Game {
         this.context.clearRect(0, 0, this.width, this.height);
 
         // draw the background
+        const backgroundImage = new Image();
+        backgroundImage.src = this._assets.background;
+
+        this.context.drawImage(backgroundImage, 0, 0);
 
         // draw the road
-        const baseSegment = this.findSegment(this.position);
-        let maxY = this.height;
+        for (let y = this.height; y >= this.height / 2; y--) {
+            const z = this._zMap[y];
+            let i = Math.round((this.position - z) * this._renderConfig.segmentMultiplier) % 2;
+            const roadWidth = this._renderConfig.roadWidth / z;
+            const center = this.width / 2;
+            const left = center - roadWidth / 2;
 
-        for (let i = 0; i < this.drawDistance; i++) {
-            const segment = this.segments[(baseSegment.index + i) % this.segments.length];
+            this.context.fillStyle = i ? Colors.GrassDark : Colors.GrassLight;
+            this.context.fillRect(0, y, this.width, 1);
 
-            this.project(segment.p1, this.playerX * this.roadWidth, this.cameraHeight, this.position, this.cameraDepth, this.width, this.height, this.roadWidth);
-            this.project(segment.p2, this.playerX * this.roadWidth, this.cameraHeight, this.position, this.cameraDepth, this.width, this.height, this.roadWidth);
+            this.context.fillStyle = i ? Colors.RoadLight : Colors.RoadDark;
+            this.context.fillRect(left, y, roadWidth, 1);
 
-            if (segment.p1.camera.z <= this.cameraDepth || segment.p2.screen.y >= maxY) {
-                continue;
+            // draw the left edge
+            this.context.fillStyle = i ? Colors.EdgeDark : Colors.EdgeLight;
+            this.context.fillRect(left, y, roadWidth * this._renderConfig.edgeThickness, 1);
+
+            // draw the right edge
+            this.context.fillStyle = i ? Colors.EdgeDark : Colors.EdgeLight;
+            this.context.fillRect(left + roadWidth - roadWidth * this._renderConfig.edgeThickness, y, roadWidth * this._renderConfig.edgeThickness, 1);
+
+            // draw the divider
+            if (i) {
+                const dividerWidth = roadWidth * this._renderConfig.dividerThickness;
+
+                this.context.fillStyle = Colors.RoadDivider;
+                this.context.fillRect(this.width / 2 - dividerWidth / 2, y, dividerWidth, 1);
             }
-
-            this.renderSegment(this.lanes, segment.p1.screen.x, segment.p1.screen.y, segment.p1.screen.w, segment.p2.screen.x, segment.p2.screen.y, segment.p2.screen.w, segment.color)
-
-            maxY = segment.p2.screen.y;
         }
     }
 
-    private renderSegment(...args) {
-    }
+    private _buildZMap() {
+        this._zMap = [];
 
-    private project(coord: Coordinate, cameraX, cameraY, cameraZ, cameraDepth, width, height, roadWidth) {
-        coord.camera = {
-            x: (coord.world.x || 0) - cameraX,
-            y: (coord.world.y || 0) - cameraY,
-            z: (coord.world.z || 0) - cameraZ,
-        };
-
-        const scale = cameraDepth / coord.camera.z;
-        coord.screen = {
-            scale: cameraDepth / coord.camera.z,
-            x: Math.round((width / 2) + (scale * coord.camera.x * width / 2)),
-            y: Math.round((height / 2) + (scale * coord.camera.y * height / 2)),
-            z: Math.round((scale *  roadWidth * width / 2)),
-        };
-    }
-
-    private findSegment(z: number) {
-        return this.segments[Math.floor(z / this.segmentLength) % this.segments.length];
-    }
-
-    private resetRoad() {
-        const segments: Segment[] = [];
-
-        for (let i = 0; i < 500; i++) {
-            segments.push({
-                index: i,
-                p1: {world: {z: i * this.segmentLength}},
-                p2: {world: {z: (i + 1) * this.segmentLength}},
-                color: Math.floor(i / this.rumbleLength) % 2 ? COLORS.DARK : COLORS.LIGHT
-            });
+        for (let y = 0; y < this.height; y++) {
+            this._zMap[y] = (1 - this._renderConfig.cameraHeight) / (y - (this.height / 2));
         }
-
-        this.segments = segments;
-        this.trackLength = segments.length * this.segmentLength;
     }
 }
