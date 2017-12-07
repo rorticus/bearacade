@@ -68,7 +68,7 @@ export class Renderer {
         const x = destX + (destW * (offsetX || 0));
         const y = destY + (destH * (offsetY || 0));
 
-        const clipH = clipY ? Math.max(0, y, destH - clipY) : 0;
+        const clipH = clipY ? Math.max(0, y + destH - clipY) : 0;
         if (clipH < destH) {
             context.drawImage(image, 0, 0, image.width, image.height - (image.height * clipH / destH), x, y, destW, destH - clipH);
         }

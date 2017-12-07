@@ -1,10 +1,16 @@
 import {ColorPalette, Coordinate} from "./interfaces";
 
+export interface Sprite {
+    image: any;
+    offset: number;
+}
+
 export interface Segment {
     index: number;
     p1: Coordinate;
     p2: Coordinate;
     curve: number;
+    sprites: Sprite[];
     palette: ColorPalette;
 }
 
@@ -63,6 +69,7 @@ export class Track {
             p1: {x: 0, y: this.lastY(), z: n * this.segmentLength},
             p2: {x: 0, y: y, z: (n + 1) * this.segmentLength},
             curve: curve,
+            sprites: [],
             palette: Math.floor(n / this.rumbleLength) % 2 ? this.darkPalette : this.lightPalette
         });
     }
@@ -105,5 +112,12 @@ export class Track {
 
     addCurve(num: number, curve: number) {
         this.addRoad(num, num, num, curve);
+    }
+
+    addSprite(image: any, index: number, offset: number) {
+        this.segments[index].sprites.push({
+            image,
+            offset
+        });
     }
 }
