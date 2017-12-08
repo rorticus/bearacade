@@ -20,3 +20,5 @@ export const bear2 = importAsset(require('./assets/bear2.png'));
 export const bear3 = importAsset(require('./assets/bear3.png'));
 export const bear4 = importAsset(require('./assets/bear4.png'));
 export const bearDead = importAsset(require('./assets/bear-dead.png'));
+
+export const endScreen = importAsset(require('./assets/end-game.png'));
