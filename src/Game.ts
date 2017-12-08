@@ -1,7 +1,7 @@
 import {Camera, Coordinate} from "./interfaces";
 import {Curve, Hill, Length, Sprite, Track} from "./Track";
 import {Renderer, spriteScale} from "./Renderer";
-import {bear1, bear2, bear3, bear4, layer1, layer2, layer3, log, pineTree, player, sky} from "./Assets";
+import {bear1, bear2, bear3, bear4, bearDead, layer1, layer2, layer3, log, pineTree, player, sky} from "./Assets";
 
 enum Colors {
     RoadDark = '#888688',
@@ -11,6 +11,13 @@ enum Colors {
     EdgeDark = '#CCCCCC',
     EdgeLight = '#FFFFFF',
     RoadDivider = '#ffffff'
+}
+
+interface Animation {
+    startTime: number;
+    duration: number;
+    renderFrame: (t: number) => void;
+    onComplete?: () => void;
 }
 
 const colors = {
@@ -70,10 +77,25 @@ function overlap(x1: number, w1: number, x2: number, w2: number, percent: number
     return !((max1 < min2) || (min1 > max2));
 }
 
-function bearCollider(this: Game, sprite: any) {
-    if (!sprite.hit) {
+function bearCollider(this: Game, sprite: Sprite) {
+    if (!sprite.hidden) {
         this.points++;
-        sprite.hit = true;
+        sprite.hidden = true;
+
+        if(sprite.lastRenderPosition) {
+            let startX = sprite.lastRenderPosition.x + sprite.lastRenderPosition.w / 2;
+            let startY = sprite.lastRenderPosition.y + sprite.lastRenderPosition.h / 2;
+
+            let endX = Math.round(Math.random() * this.width * 1.2 - this.width * 0.1);
+            let endY = Math.random() * (this.height / 4);
+
+            this.animate(0.5, (t: number) => {
+                const x = startX + (endX - startX) * t;
+                const y = startY + (endY - startY) * t;
+
+                this.context.drawImage(bearDead, x, y);
+            });
+        }
     }
 }
 
@@ -88,6 +110,7 @@ export class Game {
     speed: number;
     maxSpeed: number;
     playerZ: number;
+    animations: Animation[];
 
     context: CanvasRenderingContext2D;
     renderer: Renderer;
@@ -109,6 +132,7 @@ export class Game {
     layer2Offset: number;
     layer3Offset: number;
     points: number;
+    gameTime: number;
 
     start() {
         this.renderer = new Renderer(this.context);
@@ -121,6 +145,8 @@ export class Game {
             y: 0,
             z: 0
         };
+        this.gameTime = 0;
+        this.animations = [];
         this.points = 0;
         this.speed = 0;
         this.maxSpeed = segmentLength / this.step;
@@ -194,6 +220,8 @@ export class Game {
         const dx = deltaInSeconds * 2 * speedPercent;
         const playerW = player.width * spriteScale;
 
+        this.gameTime += deltaInSeconds;
+
         this.layer1Offset = Math.min(this.layer1Offset + 0.0001 * playerSegment.curve * speedPercent, 1);
         this.layer2Offset = Math.min(this.layer2Offset + 0.0005 * playerSegment.curve * speedPercent, 1);
         this.layer3Offset = Math.min(this.layer3Offset + 0.001 * playerSegment.curve * speedPercent, 1);
@@ -221,6 +249,9 @@ export class Game {
         }
 
         playerSegment.sprites.forEach(sprite => {
+            if (sprite.hidden) {
+                return;
+            }
             // get the player sprite bounds
             const spriteWidth = sprite.image.width * spriteScale;
 
@@ -301,13 +332,17 @@ export class Game {
             const segment = this.track.segments[(baseSegment.index + n) % this.track.segments.length];
 
             segment.sprites.forEach(sprite => {
+                if (sprite.hidden) {
+                    return;
+                }
+
                 const coords = segmentCoords[n];
 
                 const spriteScale = coords.p1.screen.scale;
                 const spriteX = coords.p1.screen.x + (spriteScale * sprite.offset * roadWidth * this.width / 2);
                 const spriteY = coords.p1.screen.y;
 
-                this.renderer.sprite(this.width, this.height, roadWidth, sprite.image, spriteScale, spriteX, spriteY, -0.5, sprite.yOffset, coords.clip);
+                sprite.lastRenderPosition = this.renderer.sprite(this.width, this.height, roadWidth, sprite.image, spriteScale, spriteX, spriteY, -0.5, sprite.yOffset, coords.clip);
             });
         }
 
@@ -316,6 +351,27 @@ export class Game {
 
         // score
         this.renderer.score(this.width, this.height, this.points);
+
+        // render the animations
+        this.animations = this.animations.filter((animation, index: number) => {
+            let t = (this.gameTime - animation.startTime) / animation.duration;
+
+            if (t > 1) {
+                t = 1;
+            }
+
+            animation.renderFrame(t);
+
+            if (t >= 1) {
+                if (animation.onComplete) {
+                    animation.onComplete();
+                }
+
+                return false;
+            }
+
+            return true;
+        });
     }
 
     private resetRoad() {
@@ -375,7 +431,7 @@ export class Game {
             }
 
             const hasLog = (Math.random() * 1000) < 10;
-            const hasBear = (Math.random() * 1000) < 2;
+            const hasBear = (Math.random() * 1000) < 20;
 
             if (hasLog) {
                 this.track.addSprite(log, i, Math.random() * 2 - 1);
@@ -387,5 +443,14 @@ export class Game {
         }
 
         this.track.length = this.track.segments.length * segmentLength;
+    }
+
+    animate(duration: number, frame: (t: number) => void, complete?: () => void) {
+        this.animations.push({
+            startTime: this.gameTime,
+            duration,
+            renderFrame: frame,
+            onComplete: complete
+        });
     }
 }

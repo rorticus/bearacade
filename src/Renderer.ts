@@ -72,6 +72,13 @@ export class Renderer {
         if (clipH < destH) {
             context.drawImage(image, 0, 0, image.width, image.height - (image.height * clipH / destH), x, y, destW, destH - clipH);
         }
+
+        return {
+            x,
+            y,
+            w: destW,
+            h: destH
+        }
     }
 
     background(background: any, width: number, height: number, offset: number) {

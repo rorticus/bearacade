@@ -10,6 +10,13 @@ export interface Sprite {
     collider?: SpriteCollider;
     isSolid: boolean;
     yOffset: number;
+    hidden: boolean;
+    lastRenderPosition?: {
+        x: number;
+        y: number;
+        w: number;
+        h: number;
+    }
 }
 
 export interface Segment {
@@ -127,7 +134,8 @@ export class Track {
             offset,
             isSolid,
             yOffset,
-            collider
+            collider,
+            hidden: false
         });
     }
 }
