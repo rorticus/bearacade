@@ -82,7 +82,7 @@ function bearCollider(this: Game, sprite: Sprite) {
         this.points++;
         sprite.hidden = true;
 
-        if(sprite.lastRenderPosition) {
+        if (sprite.lastRenderPosition) {
             let startX = sprite.lastRenderPosition.x + sprite.lastRenderPosition.w / 2;
             let startY = sprite.lastRenderPosition.y + sprite.lastRenderPosition.h / 2;
 
@@ -346,9 +346,6 @@ export class Game {
             });
         }
 
-        // render the player
-        this.renderer.sprite(this.width, this.height, roadWidth, player, this.cameraDepth / this.playerZ, this.width / 2, this.height, -0.5, -1);
-
         // score
         this.renderer.score(this.width, this.height, this.points);
 
@@ -372,6 +369,9 @@ export class Game {
 
             return true;
         });
+
+        // render the player
+        this.renderer.sprite(this.width, this.height, roadWidth, player, this.cameraDepth / this.playerZ, this.width / 2, this.height, -0.5, -1);
     }
 
     private resetRoad() {
