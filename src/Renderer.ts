@@ -100,4 +100,31 @@ export class Renderer {
             context.drawImage(background, sourceX, sourceY, sourceW, sourceH, destX + destW, destY, destW, destH);
         }
     }
+
+    score(width: number, height: number, score: number) {
+        const str = String(score);
+        const context = this.context;
+
+        context.fillStyle = '#ffffff';
+        context.font = '72px Arial Black';
+        context.strokeStyle = '#000000';
+        context.lineWidth = 2;
+        context.fillText(str, 15, 75);
+        context.strokeText(str, 15, 75);
+    }
+
+    timer(width: number, height: number, timeLeft: number) {
+        const str = String(timeLeft);
+        const context = this.context;
+
+        const x = width - 100;
+        const y = 75;
+
+        context.fillStyle = '#ffff00';
+        context.font = '72px Arial Black';
+        context.strokeStyle = '#000000';
+        context.lineWidth = 2;
+        context.fillText(str, x, y);
+        context.strokeText(str, x, y);
+    }
 }

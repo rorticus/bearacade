@@ -14,3 +14,9 @@ export const layer3 = importAsset(require('./assets/layer_3.png'));
 export const player = importAsset(require('./assets/player.png'));
 export const pineTree = importAsset(require('./assets/pine-tree.png'));
 export const log = importAsset(require('./assets/log.png'));
+
+export const bear1 = importAsset(require('./assets/bear1.png'));
+export const bear2 = importAsset(require('./assets/bear2.png'));
+export const bear3 = importAsset(require('./assets/bear3.png'));
+export const bear4 = importAsset(require('./assets/bear4.png'));
+export const bearDead = importAsset(require('./assets/bear-dead.png'));

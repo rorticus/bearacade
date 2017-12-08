@@ -1,7 +1,7 @@
 import {Camera, Coordinate} from "./interfaces";
-import {Curve, Hill, Length, Track} from "./Track";
+import {Curve, Hill, Length, Sprite, Track} from "./Track";
 import {Renderer, spriteScale} from "./Renderer";
-import {layer1, layer2, layer3, log, pineTree, player, sky} from "./Assets";
+import {bear1, bear2, bear3, bear4, layer1, layer2, layer3, log, pineTree, player, sky} from "./Assets";
 
 enum Colors {
     RoadDark = '#888688',
@@ -70,6 +70,13 @@ function overlap(x1: number, w1: number, x2: number, w2: number, percent: number
     return !((max1 < min2) || (min1 > max2));
 }
 
+function bearCollider(this: Game, sprite: any) {
+    if (!sprite.hit) {
+        this.points++;
+        sprite.hit = true;
+    }
+}
+
 export class Game {
     fps = 60;
     step = 1 / this.fps;
@@ -101,6 +108,7 @@ export class Game {
     layer1Offset: number;
     layer2Offset: number;
     layer3Offset: number;
+    points: number;
 
     start() {
         this.renderer = new Renderer(this.context);
@@ -113,6 +121,7 @@ export class Game {
             y: 0,
             z: 0
         };
+        this.points = 0;
         this.speed = 0;
         this.maxSpeed = segmentLength / this.step;
         this.resetRoad();
@@ -217,7 +226,7 @@ export class Game {
 
             if (overlap(this.position.x, playerW, sprite.offset, spriteWidth)) {
                 if (sprite.collider) {
-                    sprite.collider.call(sprite);
+                    sprite.collider.call(this, sprite);
                 }
 
                 if (sprite.isSolid) {
@@ -304,6 +313,9 @@ export class Game {
 
         // render the player
         this.renderer.sprite(this.width, this.height, roadWidth, player, this.cameraDepth / this.playerZ, this.width / 2, this.height, -0.5, -1);
+
+        // score
+        this.renderer.score(this.width, this.height, this.points);
     }
 
     private resetRoad() {
@@ -345,6 +357,8 @@ export class Game {
             Hill.High
         ];
 
+        const bearSprites = [bear1, bear2, bear3, bear4];
+
         const split1 = Math.round((size / 2) * Math.random());
         const split2 = Math.round(((size - split1) / 2) * Math.random());
         const split3 = size - split1 - split2;
@@ -355,15 +369,20 @@ export class Game {
             const trees = Math.round(Math.random() * 2);
             for (let n = 0; n < trees; n++) {
                 const side = Math.random() * 100 < 50 ? -1 : 1;
-                const offset = 1.25 + Math.random() * 6;
+                const offset = 1.5 + Math.random() * 6;
 
                 this.track.addSprite(pineTree, i, side * offset, true, -0.95);
             }
 
             const hasLog = (Math.random() * 1000) < 10;
+            const hasBear = (Math.random() * 1000) < 2;
 
             if (hasLog) {
                 this.track.addSprite(log, i, Math.random() * 2 - 1);
+            }
+
+            if (hasBear) {
+                this.track.addSprite(bearSprites[Math.floor(Math.random() * bearSprites.length)], i, Math.random() * 3 - 1.5, false, -1, <any> bearCollider);
             }
         }
 
