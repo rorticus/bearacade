@@ -1,7 +1,7 @@
 import {Camera, Coordinate} from "./interfaces";
 import {Curve, Hill, Length, Track} from "./Track";
 import {Renderer, spriteScale} from "./Renderer";
-import {layer1, layer2, layer3, pineTree, player, sky} from "./Assets";
+import {layer1, layer2, layer3, log, pineTree, player, sky} from "./Assets";
 
 enum Colors {
     RoadDark = '#888688',
@@ -215,12 +215,12 @@ export class Game {
             // get the player sprite bounds
             const spriteWidth = sprite.image.width * spriteScale;
 
-            if(overlap(this.position.x, playerW, sprite.offset + spriteWidth / 2 * (sprite.offset > 0 ? 1 : -1), spriteWidth)) {
-                if(sprite.collider) {
-                    sprite.collider();
+            if (overlap(this.position.x, playerW, sprite.offset, spriteWidth)) {
+                if (sprite.collider) {
+                    sprite.collider.call(sprite);
                 }
 
-                if(sprite.isSolid) {
+                if (sprite.isSolid) {
                     this.speed = this.maxSpeed / 5;
                     this.position.z = playerSegment.p1.z - this.playerZ;
                 }
@@ -294,7 +294,7 @@ export class Game {
                 const spriteX = coords.p1.screen.x + (spriteScale * sprite.offset * roadWidth * this.width / 2);
                 const spriteY = coords.p1.screen.y;
 
-                this.renderer.sprite(this.width, this.height, roadWidth, sprite.image, spriteScale, spriteX, spriteY, (sprite.offset < 0 ? -1 : 0), -1, coords.clip);
+                this.renderer.sprite(this.width, this.height, roadWidth, sprite.image, spriteScale, spriteX, spriteY, -0.5, sprite.yOffset, coords.clip);
             });
         }
 
@@ -323,9 +323,9 @@ export class Game {
             let n = Math.floor(Math.random() * track.segments.length);
 
             let side = Math.random() * 100 < 50 ? -1 : 1;
-            let offset = 1 + Math.random() * 6;
+            let offset = 1.25 + Math.random() * 6;
 
-            track.addSprite(pineTree, n, side * offset);
+            track.addSprite(pineTree, n, side * offset, true, -0.95);
         }
 
         track.length = track.segments.length * segmentLength;

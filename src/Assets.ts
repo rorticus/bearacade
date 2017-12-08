@@ -13,3 +13,4 @@ export const layer2 = importAsset(require('./assets/layer_2.png'));
 export const layer3 = importAsset(require('./assets/layer_3.png'));
 export const player = importAsset(require('./assets/player.png'));
 export const pineTree = importAsset(require('./assets/pine-tree.png'));
+export const log = importAsset(require('./assets/log.png'));
