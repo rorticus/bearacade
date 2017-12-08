@@ -1,6 +1,6 @@
 import {ColorPalette} from "./interfaces";
 
-const spriteScale = 0.3 * (1 / 150);
+export const spriteScale = 0.3 * (1 / 150);
 
 export class Renderer {
     constructor(public context: CanvasRenderingContext2D) {

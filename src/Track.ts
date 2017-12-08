@@ -1,8 +1,14 @@
 import {ColorPalette, Coordinate} from "./interfaces";
 
+export interface SpriteCollider {
+    (): void;
+}
+
 export interface Sprite {
     image: any;
     offset: number;
+    collider?: SpriteCollider;
+    isSolid: boolean;
 }
 
 export interface Segment {
@@ -114,10 +120,11 @@ export class Track {
         this.addRoad(num, num, num, curve);
     }
 
-    addSprite(image: any, index: number, offset: number) {
+    addSprite(image: any, index: number, offset: number, isSolid = true) {
         this.segments[index].sprites.push({
             image,
-            offset
+            offset,
+            isSolid
         });
     }
 }

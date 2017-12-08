@@ -1,6 +1,6 @@
 import {Camera, Coordinate} from "./interfaces";
 import {Curve, Hill, Length, Track} from "./Track";
-import {Renderer} from "./Renderer";
+import {Renderer, spriteScale} from "./Renderer";
 import {layer1, layer2, layer3, pineTree, player, sky} from "./Assets";
 
 enum Colors {
@@ -59,6 +59,15 @@ function project(p: Coordinate, cameraX: number, cameraY: number, cameraZ: numbe
             z: cz
         }
     };
+}
+
+function overlap(x1: number, w1: number, x2: number, w2: number, percent: number = 1) {
+    const half = (percent) / 2;
+    const min1 = x1 - (w1 * half);
+    const max1 = x1 + (w1 * half);
+    const min2 = x2 - (w2 * half);
+    const max2 = x2 + (w2 * half);
+    return !((max1 < min2) || (min1 > max2));
 }
 
 export class Game {
@@ -174,6 +183,7 @@ export class Game {
         const playerSegment = this.track.findSegment(this.position.z + this.playerZ);
         const speedPercent = this.speed / this.maxSpeed;
         const dx = deltaInSeconds * 2 * speedPercent;
+        const playerW = player.width * spriteScale;
 
         this.layer1Offset = Math.min(this.layer1Offset + 0.0001 * playerSegment.curve * speedPercent, 1);
         this.layer2Offset = Math.min(this.layer2Offset + 0.0005 * playerSegment.curve * speedPercent, 1);
@@ -200,6 +210,22 @@ export class Game {
         if ((this.position.x < -1 || this.position.x > 1) && this.speed > this.offRoadLimit) {
             this.speed += this.offRoadDecel * deltaInSeconds;
         }
+
+        playerSegment.sprites.forEach(sprite => {
+            // get the player sprite bounds
+            const spriteWidth = sprite.image.width * spriteScale;
+
+            if(overlap(this.position.x, playerW, sprite.offset + spriteWidth / 2 * (sprite.offset > 0 ? 1 : -1), spriteWidth)) {
+                if(sprite.collider) {
+                    sprite.collider();
+                }
+
+                if(sprite.isSolid) {
+                    this.speed = this.maxSpeed / 5;
+                    this.position.z = playerSegment.p1.z - this.playerZ;
+                }
+            }
+        });
 
         if (this.speed > this.maxSpeed) {
             this.speed = this.maxSpeed;
