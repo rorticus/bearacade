@@ -1,13 +1,14 @@
 import {Camera, Coordinate} from "./interfaces";
 import {Curve, Hill, Length, Track} from "./Track";
 import {Renderer} from "./Renderer";
+import {layer1, layer2, layer3, pineTree, player, sky} from "./Assets";
 
 enum Colors {
     RoadDark = '#888688',
     RoadLight = '#999799',
     GrassDark = '#00A400',
     GrassLight = '#00CC00',
-    EdgeDark = '#FF3500',
+    EdgeDark = '#CCCCCC',
     EdgeLight = '#FFFFFF',
     RoadDivider = '#ffffff'
 }
@@ -27,12 +28,10 @@ const colors = {
     }
 };
 
-declare const require: any;
-
 const segmentLength = 200;
 const roadWidth = 2000;
 const rumbleLength = 3;
-const lanes = 3;
+const lanes = 2;
 const drawDistance = 300;
 const centrifugal = 0.3;
 
@@ -90,15 +89,9 @@ export class Game {
     offRoadDecel: number;
     offRoadLimit: number;
 
-    backgroundOffset: number;
-    foregroundOffset: number;
-
-    private _assets = {
-        background: require('./assets/furtherest-background.jpg'),
-        backgroundForeground: require('./assets/background-foreground.png'),
-        player: require('./assets/player.png'),
-        pineTree1: require('./assets/pine-tree.png')
-    };
+    layer1Offset: number;
+    layer2Offset: number;
+    layer3Offset: number;
 
     start() {
         this.renderer = new Renderer(this.context);
@@ -123,8 +116,9 @@ export class Game {
         this.offRoadDecel = -this.maxSpeed / 2;
         this.offRoadLimit = this.maxSpeed / 4;
 
-        this.backgroundOffset = 0;
-        this.foregroundOffset = 0;
+        this.layer1Offset = 0;
+        this.layer2Offset = 0;
+        this.layer3Offset = 0;
 
         window.addEventListener('keydown', (event) => {
             if (event.keyCode === 37) {
@@ -181,8 +175,9 @@ export class Game {
         const speedPercent = this.speed / this.maxSpeed;
         const dx = deltaInSeconds * 2 * speedPercent;
 
-        this.backgroundOffset = Math.min(this.backgroundOffset + 0.001 * playerSegment.curve * speedPercent, 1);
-        this.foregroundOffset = Math.min(this.foregroundOffset + 0.002 * playerSegment.curve * speedPercent, 1);
+        this.layer1Offset = Math.min(this.layer1Offset + 0.0001 * playerSegment.curve * speedPercent, 1);
+        this.layer2Offset = Math.min(this.layer2Offset + 0.0005 * playerSegment.curve * speedPercent, 1);
+        this.layer3Offset = Math.min(this.layer3Offset + 0.001 * playerSegment.curve * speedPercent, 1);
 
         this.position.z = this.position.z + deltaInSeconds * this.speed;
 
@@ -223,26 +218,13 @@ export class Game {
     }
 
     private render() {
-        // draw the background
-        const backgroundImage = new Image();
-        backgroundImage.src = this._assets.background;
-
-        const foregroundImage = new Image();
-        foregroundImage.src = this._assets.backgroundForeground;
-
-        const playerImage = new Image();
-        playerImage.src = this._assets.player;
-
         this.context.clearRect(0, 0, this.width, this.height);
 
-        // this.renderer.background(backgroundImage, this.width, this.height, {
-        //     w: backgroundImage.width,
-        //     h: backgroundImage.height
-        // }, this.backgroundOffset);
-        // this.renderer.background(foregroundImage, this.width, this.height, {
-        //     w: foregroundImage.width,
-        //     h: foregroundImage.height
-        // }, this.foregroundOffset);
+        // draw the background
+        this.renderer.background(sky, this.width, this.height, 0);
+        this.renderer.background(layer1, this.width, this.height, this.layer1Offset);
+        this.renderer.background(layer3, this.width, this.height, this.layer2Offset);
+        this.renderer.background(layer2, this.width, this.height, this.layer3Offset);
 
         // render the road
         const baseSegment = this.track.findSegment(this.position.z);
@@ -262,7 +244,7 @@ export class Game {
             const p1 = project(segment.p1, this.position.x * roadWidth - x, playerY + this.camera.height, this.position.z, this.cameraDepth, this.width, this.height, roadWidth);
             const p2 = project(segment.p2, this.position.x * roadWidth - x - dx, playerY + this.camera.height, this.position.z, this.cameraDepth, this.width, this.height, roadWidth);
 
-            segmentCoords[n] = { p1, p2, clip: maxY };
+            segmentCoords[n] = {p1, p2, clip: maxY};
 
             x += dx;
             dx += segment.curve;
@@ -276,7 +258,7 @@ export class Game {
             maxY = p1.screen.y;
         }
 
-        for(let n = (drawDistance - 1); n > 0; n--) {
+        for (let n = (drawDistance - 1); n > 0; n--) {
             const segment = this.track.segments[(baseSegment.index + n) % this.track.segments.length];
 
             segment.sprites.forEach(sprite => {
@@ -291,7 +273,7 @@ export class Game {
         }
 
         // render the player
-        this.renderer.sprite(this.width, this.height, roadWidth, playerImage, this.cameraDepth / this.playerZ, this.width / 2, this.height, -0.5, -1);
+        this.renderer.sprite(this.width, this.height, roadWidth, player, this.cameraDepth / this.playerZ, this.width / 2, this.height, -0.5, -1);
     }
 
     private resetRoad() {
@@ -311,13 +293,13 @@ export class Game {
         track.addSCurve();
         track.addCurve(Length.Long, -Curve.Easy);
 
-        const image = new Image();
-        image.src = this._assets.pineTree1;
-
-        for(let i = 0; i < 1000; i++) {
+        for (let i = 0; i < 1000; i++) {
             let n = Math.floor(Math.random() * track.segments.length);
 
-            track.addSprite(image, n, Math.random() + Math.random() < 0.6 ? -2 : 2);
+            let side = Math.random() * 100 < 50 ? -1 : 1;
+            let offset = 1 + Math.random() * 6;
+
+            track.addSprite(pineTree, n, side * offset);
         }
 
         track.length = track.segments.length * segmentLength;

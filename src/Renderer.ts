@@ -74,25 +74,30 @@ export class Renderer {
         }
     }
 
-    background(background: any, width: number, height: number, layer: any, offset: number) {
+    background(background: any, width: number, height: number, offset: number) {
         const context = this.context;
 
-        const imageW = layer.w / 2;
-        const imageH = layer.h;
+        const imageW = background.width / 2;
+        const imageH = background.height;
 
-        const sourceX = Math.floor(layer.w * offset);
+        const sourceX = 0;
         const sourceY = 0;
-        const sourceW = Math.min(imageW, layer.w - sourceX);
+        const sourceW = background.width;
         const sourceH = imageH;
 
-        const destX = 0;
+        const destX = background.width * offset;
         const destY = 0;
-        const destW = Math.floor(width * (sourceW / imageW));
+        const destW = background.width;
         const destH = height;
 
         context.drawImage(background, sourceX, sourceY, sourceW, sourceH, destX, destY, destW, destH);
-        if (sourceW < imageW) {
-            context.drawImage(background, 0, sourceY, imageW - sourceW, sourceH, destW - 1, destY, width - destW, destH);
+
+        if (destX > 0) {
+            context.drawImage(background, sourceX, sourceY, sourceW, sourceH, destX - destW, destY, destW, destH);
+        }
+
+        if (destX + destW < width) {
+            context.drawImage(background, sourceX, sourceY, sourceW, sourceH, destX + destW, destY, destW, destH);
         }
     }
 }
