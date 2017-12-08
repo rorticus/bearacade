@@ -3,7 +3,7 @@ import {Curve, Hill, Length, Sprite, Track} from "./Track";
 import {Renderer, spriteScale} from "./Renderer";
 import {
     bear1, bear2, bear3, bear4, bearDead, endScreen, layer1, layer2, layer3, log, pineTree, player,
-    sky
+    sky, startScreen
 } from "./Assets";
 
 enum Colors {
@@ -139,6 +139,7 @@ export class Game {
     gameElapsed: number;
     gameDuration: number;
     paused: boolean;
+    showStart: boolean;
 
     start() {
         this.renderer = new Renderer(this.context);
@@ -160,6 +161,8 @@ export class Game {
         this.cameraDepth = 1 / Math.tan((this.camera.fieldOfView / 2) * Math.PI / 180);
         this.playerZ = this.camera.height * this.cameraDepth;
         this.paused = true;
+
+        this.showStart = true;
 
         this.accel = this.maxSpeed / 5;
         this.breaking = -this.maxSpeed;
@@ -200,6 +203,48 @@ export class Game {
             else if (event.keyCode === 40) {
                 this.reverseKey = false;
             }
+            else if (event.keyCode === 13) {
+                if (this.showStart === true) {
+                    this.showStart = false;
+
+                    const number = (n: string, t: number, color: string, maxScale = 2) => {
+                        this.context.save();
+                        this.context.globalAlpha = t < 0.5 ? t * 2 : (1 - t) * 2;
+                        this.context.translate(this.width / 2, this.height / 2);
+                        this.context.scale(this.context.globalAlpha * maxScale, this.context.globalAlpha * maxScale);
+                        this.context.font = "72px arial black";
+                        this.context.fillStyle = color;
+                        this.context.textAlign = "center";
+                        this.context.textBaseline = "middle";
+                        this.context.fillText(n, 0, 0);
+                        this.context.restore();
+                    };
+
+                    this.animate(1, (t) => {
+                        number("3", t, '#ffffff');
+                    }, () => {
+                        setTimeout(() => {
+                            this.animate(1, (t) => {
+                                number("2", t, '#ffffff');
+                            }, () => {
+                                setTimeout(() => {
+                                    this.animate(1, (t) => {
+                                        number("1", t, '#ffffff');
+                                    }, () => {
+                                        this.paused = false;
+
+                                        setTimeout(() => {
+                                            this.animate(2, (t) => {
+                                                number("SLAUGHTER!", t, '#ff0000', 1);
+                                            });
+                                        }, 0);
+                                    });
+                                }, 0);
+                            });
+                        }, 0);
+                    });
+                }
+            }
         });
 
         let last = Date.now();
@@ -222,43 +267,6 @@ export class Game {
         };
 
         frame();
-
-        const number = (n: string, t: number, color: string, maxScale = 2) => {
-            this.context.save();
-            this.context.globalAlpha = t < 0.5 ? t * 2 : (1 - t) * 2;
-            this.context.translate(this.width / 2, this.height / 2);
-            this.context.scale(this.context.globalAlpha * maxScale, this.context.globalAlpha * maxScale);
-            this.context.font = "72px arial black";
-            this.context.fillStyle = color;
-            this.context.textAlign = "center";
-            this.context.textBaseline = "middle";
-            this.context.fillText(n, 0, 0);
-            this.context.restore();
-        };
-
-        this.animate(1, (t) => {
-            number("3", t, '#ffffff');
-        }, () => {
-            setTimeout(() => {
-                this.animate(1, (t) => {
-                    number("2", t, '#ffffff');
-                }, () => {
-                    setTimeout(() => {
-                        this.animate(1, (t) => {
-                            number("1", t, '#ffffff');
-                        }, () => {
-                            this.paused = false;
-
-                            setTimeout(() => {
-                                this.animate(2, (t) => {
-                                    number("SLAUGHTER!", t, '#ff0000', 1);
-                                });
-                            }, 0);
-                        });
-                    }, 0);
-                });
-            }, 0);
-        });
     }
 
     private update(deltaInSeconds: number) {
@@ -348,6 +356,22 @@ export class Game {
     private render() {
         this.context.clearRect(0, 0, this.width, this.height);
 
+        if (this.showStart) {
+            this.context.drawImage(startScreen, 0, 0);
+            return;
+        } else if (this.gameElapsed > this.gameDuration) {
+            this.context.drawImage(endScreen, 0, 0);
+            this.context.save();
+            this.context.fillStyle = '#ffffff';
+            this.context.font = '150px arial black';
+            this.context.textAlign = 'center';
+            this.context.textBaseline = 'middle';
+            this.context.fillText(String(this.points), 140, 350);
+            this.context.restore();
+            return;
+        }
+
+
         // draw the background
         this.renderer.background(sky, this.width, this.height, 0);
         this.renderer.background(layer1, this.width, this.height, this.layer1Offset);
@@ -433,17 +457,6 @@ export class Game {
 
         // render the player
         this.renderer.sprite(this.width, this.height, roadWidth, player, this.cameraDepth / this.playerZ, this.width / 2, this.height, -0.5, -1);
-
-        if (this.gameElapsed > this.gameDuration) {
-            this.context.drawImage(endScreen, 0, 0);
-            this.context.save();
-            this.context.fillStyle = '#ffffff';
-            this.context.font = '150px arial black';
-            this.context.textAlign = 'center';
-            this.context.textBaseline = 'middle';
-            this.context.fillText(String(this.points), 140, 350);
-            this.context.restore();
-        }
     }
 
     private resetRoad() {
