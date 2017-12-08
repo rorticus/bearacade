@@ -6,7 +6,7 @@ import {layer1, layer2, layer3, pineTree, player, sky} from "./Assets";
 enum Colors {
     RoadDark = '#888688',
     RoadLight = '#999799',
-    GrassDark = '#00A400',
+    GrassDark = '#00BB00',
     GrassLight = '#00CC00',
     EdgeDark = '#CCCCCC',
     EdgeLight = '#FFFFFF',
