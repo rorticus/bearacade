@@ -241,6 +241,10 @@ export class Game {
         if (this.position.x > 2) {
             this.position.x = 2;
         }
+
+        while (playerSegment.index + drawDistance > this.track.segments.length) {
+            this.generateOneTrack();
+        }
     }
 
     private render() {
@@ -305,31 +309,64 @@ export class Game {
     private resetRoad() {
         const track = new Track(segmentLength, rumbleLength, colors.light, colors.dark);
 
-        track.addStraight(Length.Short / 4);
-        track.addSCurve();
-        track.addLowRollingHills(Length.Medium, Hill.Medium);
-        track.addStraight(Length.Long);
-        track.addCurve(Length.Medium, Curve.Medium);
-        track.addCurve(Length.Long, Curve.Medium);
-        track.addStraight(Length.Medium);
-        track.addSCurve();
-        track.addCurve(Length.Long, -Curve.Medium);
-        track.addCurve(Length.Long, Curve.Medium);
-        track.addStraight(Length.Medium);
-        track.addSCurve();
-        track.addCurve(Length.Long, -Curve.Easy);
-
-        for (let i = 0; i < 1000; i++) {
-            let n = Math.floor(Math.random() * track.segments.length);
-
-            let side = Math.random() * 100 < 50 ? -1 : 1;
-            let offset = 1.25 + Math.random() * 6;
-
-            track.addSprite(pineTree, n, side * offset, true, -0.95);
-        }
-
         track.length = track.segments.length * segmentLength;
 
         this.track = track;
+
+        this.generateOneTrack();
+    }
+
+    generateOneTrack() {
+        let originalSize = this.track.segments.length;
+        const size = 300;
+
+        let curves = [
+            Curve.None,
+            Curve.None,
+            Curve.None,
+            Curve.None,
+            Curve.None,
+            Curve.Easy,
+            Curve.Easy,
+            Curve.Medium,
+            Curve.Hard
+        ];
+
+        let hills = [
+            Hill.None,
+            Hill.None,
+            Hill.None,
+            Hill.None,
+            Hill.None,
+            Hill.Low,
+            Hill.Low,
+            Hill.Medium,
+            Hill.Medium,
+            Hill.High
+        ];
+
+        const split1 = Math.round((size / 2) * Math.random());
+        const split2 = Math.round(((size - split1) / 2) * Math.random());
+        const split3 = size - split1 - split2;
+
+        this.track.addRoad(split1, split2, split3, curves[Math.floor(Math.random() * curves.length)], hills[Math.floor(Math.random() * hills.length)]);
+
+        for (let i = originalSize; i < this.track.segments.length; i++) {
+            const trees = Math.round(Math.random() * 2);
+            for (let n = 0; n < trees; n++) {
+                const side = Math.random() * 100 < 50 ? -1 : 1;
+                const offset = 1.25 + Math.random() * 6;
+
+                this.track.addSprite(pineTree, i, side * offset, true, -0.95);
+            }
+
+            const hasLog = (Math.random() * 1000) < 10;
+
+            if (hasLog) {
+                this.track.addSprite(log, i, Math.random() * 2 - 1);
+            }
+        }
+
+        this.track.length = this.track.segments.length * segmentLength;
     }
 }
