@@ -29,5 +29,11 @@
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.9.5",
     "webpack-merge": "^4.1.1"
+  },
+  "dependencies": {
+    "@slack/client": "^3.14.2",
+    "express": "^4.16.2",
+    "lowdb": "^1.0.0",
+    "yargs": "^10.0.3"
   }
 }
