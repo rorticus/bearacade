@@ -1,10 +1,7 @@
 import {Game} from './Game';
+import './assets/main.css';
 
-const canvas = document.createElement('canvas');
-canvas.width = 640;
-canvas.height = 480;
-
-document.body.appendChild(canvas);
+const canvas = document.getElementById('game') as HTMLCanvasElement;
 
 const game = new Game();
 

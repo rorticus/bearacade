@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     devtool: 'inline-source-map',
@@ -15,10 +16,20 @@ module.exports = {
         rules: [
             {test: /\.ts$/, loader: 'ts-loader'},
             {test: /\.(jpg|png)$/, loader: 'file-loader'},
-            {test: /\.(mp3|wav)$/, loader: 'arraybuffer-loader'}
+            {test: /\.(mp3|wav)$/, loader: 'arraybuffer-loader'},
+            {
+                test: /\.css$/, use: ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: "css-loader"
+                })
+            }
         ]
     },
     plugins: [
-        new HtmlWebpackPlugin()
+        new HtmlWebpackPlugin({
+            title: 'Bearacade',
+            template: 'src/index.html'
+        }),
+        new ExtractTextPlugin('styles.css')
     ]
 };
