@@ -23,3 +23,10 @@ export const bearDead = importAsset(require('./assets/bear-dead.png'));
 
 export const startScreen = importAsset(require('./assets/start-game.png'));
 export const endScreen = importAsset(require('./assets/end-game.png'));
+
+export const introMusic = require('./assets/intro.mp3');
+export const backgroundMusic = require('./assets/background-music.mp3');
+export const endMusic = require('./assets/ending.mp3');
+
+export const collectSound = require('./assets/collect.wav');
+export const crashSound = require('./assets/crash.wav');

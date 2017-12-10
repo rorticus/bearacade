@@ -5,6 +5,12 @@ import {
     bear1, bear2, bear3, bear4, bearDead, endScreen, layer1, layer2, layer3, log, pineTree, player,
     sky, startScreen
 } from "./Assets";
+import {
+    loadMusic, playCollectEffect, playCrashEffect, startBackgroundMusic, startCarSound, startCreditsMusic,
+    startIntroMusic,
+    stopBackgroundMusic, stopCarSound,
+    stopIntroMusic
+} from "./Sound";
 
 enum Colors {
     RoadDark = '#888688',
@@ -85,6 +91,8 @@ function bearCollider(this: Game, sprite: Sprite) {
         this.points++;
         sprite.hidden = true;
 
+        playCollectEffect();
+
         if (sprite.lastRenderPosition) {
             let startX = sprite.lastRenderPosition.x + sprite.lastRenderPosition.w / 2;
             let startY = sprite.lastRenderPosition.y + sprite.lastRenderPosition.h / 2;
@@ -141,7 +149,9 @@ export class Game {
     paused: boolean;
     showStart: boolean;
 
-    start() {
+    async start() {
+        await loadMusic();
+
         this.renderer = new Renderer(this.context);
         this.camera = {
             height: 1000,
@@ -163,6 +173,7 @@ export class Game {
         this.paused = true;
 
         this.showStart = true;
+        startIntroMusic();
 
         this.accel = this.maxSpeed / 5;
         this.breaking = -this.maxSpeed;
@@ -206,6 +217,8 @@ export class Game {
             else if (event.keyCode === 13) {
                 if (this.showStart === true) {
                     this.showStart = false;
+                    stopIntroMusic();
+                    startBackgroundMusic();
 
                     const number = (n: string, t: number, color: string, maxScale = 2) => {
                         this.context.save();
@@ -284,7 +297,11 @@ export class Game {
         this.gameElapsed += deltaInSeconds;
 
         if (this.gameElapsed >= this.gameDuration) {
-            this.paused = true;
+            if (!this.paused) {
+                stopBackgroundMusic();
+                startCreditsMusic();
+                this.paused = true;
+            }
             return;
         }
 
@@ -303,10 +320,12 @@ export class Game {
         this.position.x -= dx * speedPercent * playerSegment.curve * centrifugal;
 
         if (this.forwardKey) {
+            startCarSound();
             this.speed += this.accel * deltaInSeconds;
         } else if (this.reverseKey) {
             this.speed += this.breaking * deltaInSeconds;
         } else {
+            stopCarSound();
             this.speed += this.roadDecel * deltaInSeconds;
         }
 
@@ -329,6 +348,11 @@ export class Game {
                 if (sprite.isSolid) {
                     this.speed = this.maxSpeed / 5;
                     this.position.z = playerSegment.p1.z - this.playerZ;
+
+                    if (!(<any>sprite).playedSound) {
+                        playCrashEffect();
+                        (<any>sprite).playedSound = true;
+                    }
                 }
             }
         });
