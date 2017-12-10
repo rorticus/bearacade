@@ -4,9 +4,9 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     devtool: 'inline-source-map',
-    entry: './src/main.ts',
+    entry: './client/src/main.ts',
     output: {
-        path: path.resolve('./output'),
+        path: path.resolve('./client-dist'),
         filename: 'bundle.js'
     },
     resolve: {
@@ -28,7 +28,7 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             title: 'Bearacade',
-            template: 'src/index.html'
+            template: 'client/src/index.html'
         }),
         new ExtractTextPlugin('styles.css')
     ]
