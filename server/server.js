@@ -13,7 +13,7 @@ const options = yargs
         description: 'Port number to run the web server on'
     })
     .option('link', {
-        default: 'https://rortic.us:3000'
+        default: 'http://rortic.us:3000'
     })
     .option('score', {
         type: 'number',
@@ -36,6 +36,14 @@ expressWs(app);
 
 app.post('/slash-command', function (req, res, next) {
     const slackReq = req.body;
+
+    if(slackReq.channel_name !== 'general') {
+        res.set('Content-Type', 'application/json');
+        res.send(JSON.stringify({
+            "text": "You can only start bearacade from the #general channel!"
+        }));
+        return;
+    }
 
     const startMessages = [
         'Ready to "collect" some bears? ',

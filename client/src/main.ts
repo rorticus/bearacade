@@ -7,7 +7,7 @@ const canvas = document.getElementById('game') as HTMLCanvasElement;
 const game = new Game();
 game.context = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-const api = new Api(document.location.origin.replace(document.location.protocol, 'wss:'));
+const api = new Api(document.location.origin.replace(document.location.protocol, 'ws:'));
 
 const matches = document.location.hash.match('#session=(.*)');
 if (matches) {
