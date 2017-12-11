@@ -2,6 +2,10 @@ import {backgroundMusic, collectSound, crashSound, endMusic, introMusic} from ".
 
 const audioContext = new AudioContext();
 
+const gainNode = audioContext.createGain();
+gainNode.gain.value = 0.25;
+gainNode.connect(audioContext.destination);
+
 let backgroundMusicSource: AudioBufferSourceNode;
 let introMusicSource: AudioBufferSourceNode;
 let creditsMusicSource: AudioBufferSourceNode;
@@ -15,7 +19,7 @@ async function convertMp3(mp3: ArrayBuffer): Promise<AudioBufferSourceNode> {
             const source = audioContext.createBufferSource();
             source.buffer = buffer;
             source.loop = true;
-            source.connect(audioContext.destination);
+            source.connect(gainNode);
 
             resolve(source);
         });
@@ -73,14 +77,14 @@ export function stopCreditsMusic() {
 export function playCrashEffect() {
     const source = audioContext.createBufferSource();
     source.buffer = crashEffect;
-    source.connect(audioContext.destination);
+    source.connect(gainNode);
     source.start(0);
 }
 
 export function playCollectEffect() {
     const source = audioContext.createBufferSource();
     source.buffer = collectEffect;
-    source.connect(audioContext.destination);
+    source.connect(gainNode);
     source.start(0);
 }
 

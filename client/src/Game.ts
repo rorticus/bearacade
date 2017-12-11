@@ -148,6 +148,7 @@ export class Game {
     gameDuration: number;
     paused: boolean;
     showStart: boolean;
+    onEnd: Function;
 
     async start() {
         await loadMusic();
@@ -301,6 +302,9 @@ export class Game {
                 stopBackgroundMusic();
                 startCreditsMusic();
                 this.paused = true;
+                if (this.onEnd) {
+                    this.onEnd();
+                }
             }
             return;
         }
@@ -507,8 +511,16 @@ export class Game {
             Curve.None,
             Curve.Easy,
             Curve.Easy,
+            Curve.Easy,
+            Curve.Easy,
             Curve.Medium,
-            Curve.Hard
+            Curve.Hard,
+            -Curve.Easy,
+            -Curve.Easy,
+            -Curve.Easy,
+            -Curve.Easy,
+            -Curve.Medium,
+            -Curve.Hard
         ];
 
         let hills = [
