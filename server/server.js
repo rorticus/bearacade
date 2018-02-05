@@ -37,13 +37,13 @@ expressWs(app);
 app.post('/slash-command', function (req, res, next) {
     const slackReq = req.body;
 
-    if(slackReq.channel_name !== 'general') {
-        res.set('Content-Type', 'application/json');
-        res.send(JSON.stringify({
-            "text": "You can only start bearacade from the #general channel!"
-        }));
-        return;
-    }
+    // if(slackReq.channel_name !== 'general') {
+    //     res.set('Content-Type', 'application/json');
+    //     res.send(JSON.stringify({
+    //         "text": "You can only start bearacade from the #general channel!"
+    //     }));
+    //     return;
+    // }
 
     const startMessages = [
         'Ready to "collect" some bears? ',
@@ -110,6 +110,24 @@ app.ws('/client/:clientId', function (ws, req) {
                 });
 
                 delete sessions[sessionId];
+            });
+
+            ws.on('close', function () {
+                if (sessions[sessionId]) {
+                    request({
+                        uri: session.responseUrl,
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            text: session.userName + ' wasn\'t doing well so they pulled the plug. shame. *SHAME*.',
+                            response_type: "in_channel"
+                        })
+                    });
+
+                    delete sessions[sessionId];
+                }
             });
         }
     }
