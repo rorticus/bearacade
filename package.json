@@ -4,8 +4,8 @@
   "description": "Source Info:",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server",
-    "build": "webpack --config=webpack.prod.js"
+    "server:build": "cd server && npm run build",
+    "server:watch": "cd server && npm run build -- -w"
   },
   "repository": {
     "type": "git",
