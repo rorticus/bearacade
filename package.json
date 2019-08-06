@@ -4,8 +4,7 @@
   "description": "Source Info:",
   "main": "index.js",
   "scripts": {
-    "server:build": "cd server && npm run build",
-    "server:watch": "cd server && npm run build -- -w"
+    "server:dev": "cd server && npm run dev"
   },
   "repository": {
     "type": "git",

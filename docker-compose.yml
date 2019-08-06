@@ -5,10 +5,8 @@ services:
     image: docker.rortic.us/bearacade
     build:
       context: ./
-    command: "/app/node_modules/.bin/nodemon /app/main.js"
+    command: "/usr/local/bin/npm run server:dev"
     ports:
       - 8000:8000
     volumes:
-      - ./server/build/:/app
-      - ./server/node_modules:/app/node_modules
-      - ./client/build/:/client
+      - ./:/app

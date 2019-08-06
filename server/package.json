@@ -4,7 +4,9 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "build:watch": "tsc -w",
+    "dev": "nodemon"
   },
   "author": "",
   "license": "ISC",
@@ -23,6 +25,7 @@
     "@types/node": "^12.6.9",
     "@types/node-fetch": "^2.5.0",
     "@types/node-json-db": "0.0.1",
+    "concurrently": "^4.1.1",
     "typescript": "^3.5.3"
   }
 }
