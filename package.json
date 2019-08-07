@@ -4,7 +4,9 @@
   "description": "Source Info:",
   "main": "index.js",
   "scripts": {
-    "server:dev": "cd server && npm run dev"
+    "server:dev": "cd server && npm run dev",
+    "client:dev": "cd client && npm run dev",
+    "dev": "concurrently npm:server:dev npm:client:dev"
   },
   "repository": {
     "type": "git",
@@ -17,7 +19,7 @@
   },
   "homepage": "https://github.com/rorticus/bearacade#readme",
   "devDependencies": {
+    "concurrently": "^4.1.1"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

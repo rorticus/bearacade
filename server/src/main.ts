@@ -3,7 +3,7 @@ import { AppModule } from './app/app.module';
 import { resolve } from 'path';
 import * as express from 'express';
 
-const gamePath = process.env.STATIC_PATH || resolve(__dirname, '../../old-client/build');
+const gamePath = process.env.STATIC_PATH || resolve(__dirname, '../../client/build');
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
