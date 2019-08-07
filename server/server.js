@@ -31,7 +31,7 @@ var highScore = {
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: false}));
-app.use('/bearacade', express.static('client-dist'));
+app.use('/bearacade', express.static('old-client-dist'));
 expressWs(app);
 
 app.post('/slash-command', function (req, res, next) {
@@ -66,7 +66,7 @@ app.post('/slash-command', function (req, res, next) {
     }));
 });
 
-app.ws('/client/:clientId', function (ws, req) {
+app.ws('/old-client/:clientId', function (ws, req) {
     const sessionId = req.params.clientId;
 
     if (sessions[sessionId]) {

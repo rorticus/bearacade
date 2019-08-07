@@ -1,5 +1,6 @@
 .idea
 node_modules
-client-dist
+client/node_modules
+client/build
 server/node_modules
 server/build

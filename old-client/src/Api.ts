@@ -5,7 +5,7 @@ export class Api {
     }
 
     public connect(sessionId: string) {
-        this._ws = new WebSocket(this.rootApi + '/client/' + sessionId);
+        this._ws = new WebSocket(this.rootApi + '/old-client/' + sessionId);
 
         return new Promise(resolve => {
             this._ws.addEventListener('open', () => {
