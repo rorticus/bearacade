@@ -1,4 +1,18 @@
-const div = document.createElement('div');
-div.innerHTML = 'i am a div!';
+import {Engine} from "./engine/Engine";
+import {Game} from "./game/game";
 
-document.body.appendChild(div);
+const mountPoint = document.getElementById('app');
+const canvas = document.createElement('canvas');
+canvas.width = 640;
+canvas.height = 480;
+
+canvas.classList.add('main');
+
+mountPoint.innerHTML = '';
+mountPoint.appendChild(canvas);
+
+const game = new Game({
+    mountPoint: canvas,
+    clientId: location.hash.substr(1)
+});
+game.start();
