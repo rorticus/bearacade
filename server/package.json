@@ -14,17 +14,22 @@
     "@nestjs/common": "^6.5.3",
     "@nestjs/core": "^6.5.3",
     "@nestjs/platform-express": "^6.5.3",
+    "@nestjs/platform-ws": "^6.5.3",
+    "@nestjs/websockets": "^6.5.3",
     "node-fetch": "^2.6.0",
     "node-json-db": "^1.0.1",
     "nodemon": "^1.19.1",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^6.5.2"
+    "rxjs": "^6.5.2",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@types/express": "^4.17.0",
     "@types/node": "^12.6.9",
     "@types/node-fetch": "^2.5.0",
     "@types/node-json-db": "0.0.1",
+    "@types/socket.io": "^2.1.2",
+    "@types/uuid": "^3.4.5",
     "concurrently": "^4.1.1",
     "typescript": "^3.5.3"
   }
