@@ -1,5 +1,5 @@
 import {Engine} from "./engine/Engine";
-import {Game} from "./game/game";
+import {Game} from "./game/Game";
 
 const mountPoint = document.getElementById('app');
 const canvas = document.createElement('canvas');

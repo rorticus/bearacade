@@ -1,5 +1,5 @@
 import {Engine} from "../engine/Engine";
-import {Server} from "./server";
+import {Server} from "./Server";
 
 export interface GameOptions {
     mountPoint: HTMLCanvasElement;
