@@ -19,19 +19,32 @@ export interface Sprite {
     }
 }
 
+export type RoadTexture = string;
+
+export interface RoadType {
+    evenRoadColor: RoadTexture;
+    oddRoadColor: RoadTexture;
+    evenGrassColor: RoadTexture;
+    oddGrassColor: RoadTexture;
+    rumbleColor: RoadTexture;
+    evenLaneColor?: RoadTexture;
+    oddLaneColor?: RoadTexture;
+
+    onRoadAccel: number;
+    onRoadBreaking: number;
+    onRoadDecel: number;
+    offRoadDecel: number;
+    onRoadMaxSpeed: number;
+    offRoadMaxSpeed: number;
+}
+
 export interface Segment {
     index: number;
     p1: Coordinate;
     p2: Coordinate;
     curve: number;
     sprites: Sprite[];
-    color: string;
-    accel: number;
-    breaking: number;
-    roadDecel: number;
-    offRoadDecel: number;
-    roadMaxSpeed: number;
-    offRoadMaxSpeed: number;
+    type: RoadType;
 }
 
 export enum Length {
@@ -84,7 +97,7 @@ export class Track {
         return (this.segments.length === 0) ? 0 : this.segments[this.segments.length - 1].p2.y;
     }
 
-    addSegment(curve: number, y: number, color: string) {
+    addSegment(curve: number, y: number, roadType: RoadType) {
         const n = this.segments.length;
         this.segments.push({
             index: n,
@@ -92,53 +105,47 @@ export class Track {
             p2: {x: 0, y: y, z: (n + 1) * segmentLength},
             curve: curve,
             sprites: [],
-            color,
-            accel: 1 / 5,
-            breaking: -1,
-            roadDecel: -1 / 5,
-            offRoadDecel: -1 / 2,
-            roadMaxSpeed: 3,
-            offRoadMaxSpeed: 1
+            type: roadType,
         });
     }
 
-    addRoad(enter: number, hold: number, leave: number, curve: number, y: number = 0, color: string) {
+    addRoad(enter: number, hold: number, leave: number, curve: number, y: number = 0, roadType: RoadType) {
         const startY = this.lastY();
         const endY = startY + Math.floor(y * segmentLength);
         const total = enter + hold + leave;
         for (let n = 0; n < enter; n++) {
-            this.addSegment(easeIn(0, curve, n / enter), easeInOut(startY, endY, n / total), color);
+            this.addSegment(easeIn(0, curve, n / enter), easeInOut(startY, endY, n / total), roadType);
         }
         for (let n = 0; n < hold; n++) {
-            this.addSegment(curve, easeInOut(startY, endY, (enter + n) / total), color);
+            this.addSegment(curve, easeInOut(startY, endY, (enter + n) / total), roadType);
         }
         for (let n = 0; n < leave; n++) {
-            this.addSegment(easeInOut(curve, 0, n / leave), easeInOut(startY, endY, (enter + hold + n) / total), color);
+            this.addSegment(easeInOut(curve, 0, n / leave), easeInOut(startY, endY, (enter + hold + n) / total), roadType);
         }
     }
 
-    addLowRollingHills(num: number, height: number, color: string) {
-        this.addRoad(num, num, num, 0, height / 2, color);
-        this.addRoad(num, num, num, 0, -height, color);
-        this.addRoad(num, num, num, 0, height, color);
-        this.addRoad(num, num, num, 0, 0, color);
-        this.addRoad(num, num, num, 0, height / 2, color);
-        this.addRoad(num, num, num, 0, 0, color);
+    addLowRollingHills(num: number, height: number, roadType: RoadType) {
+        this.addRoad(num, num, num, 0, height / 2, roadType);
+        this.addRoad(num, num, num, 0, -height, roadType);
+        this.addRoad(num, num, num, 0, height, roadType);
+        this.addRoad(num, num, num, 0, 0, roadType);
+        this.addRoad(num, num, num, 0, height / 2, roadType);
+        this.addRoad(num, num, num, 0, 0, roadType);
     }
 
-    addSCurve(color: string) {
-        this.addRoad(Length.Medium, Length.Medium, Length.Medium, -Curve.Easy, 0, color);
-        this.addRoad(Length.Medium, Length.Medium, Length.Medium, Curve.Medium, 0, color);
-        this.addRoad(Length.Medium, Length.Medium, Length.Medium, Curve.Easy, 0, color);
-        this.addRoad(Length.Medium, Length.Medium, Length.Medium, -Curve.Easy, 0, color);
-        this.addRoad(Length.Medium, Length.Medium, Length.Medium, -Curve.Medium, 0, color);
+    addSCurve(roadType: RoadType) {
+        this.addRoad(Length.Medium, Length.Medium, Length.Medium, -Curve.Easy, 0, roadType);
+        this.addRoad(Length.Medium, Length.Medium, Length.Medium, Curve.Medium, 0, roadType);
+        this.addRoad(Length.Medium, Length.Medium, Length.Medium, Curve.Easy, 0, roadType);
+        this.addRoad(Length.Medium, Length.Medium, Length.Medium, -Curve.Easy, 0, roadType);
+        this.addRoad(Length.Medium, Length.Medium, Length.Medium, -Curve.Medium, 0, roadType);
     }
 
-    addStraight(num: number, color: string) {
-        this.addRoad(num, num, num, 0, 0, color);
+    addStraight(num: number, roadType: RoadType) {
+        this.addRoad(num, num, num, 0, 0, roadType);
     }
 
-    addCurve(num: number, curve: number, color: string) {
-        this.addRoad(num, num, num, curve, 0, color);
+    addCurve(num: number, curve: number, roadType: RoadType) {
+        this.addRoad(num, num, num, curve, 0, roadType);
     }
 }

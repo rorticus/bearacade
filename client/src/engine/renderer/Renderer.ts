@@ -12,10 +12,8 @@ export class Renderer {
 
     segmentLength = 200;
     roadWidth = 2000;
-    rumbleLength = 3;
     lanes = 2;
     drawDistance = 300;
-    centrifugal = 0.3;
 
     get height() {
         return this._graphics.height;
@@ -77,6 +75,7 @@ export class Renderer {
         const playerSegment = track.findSegment(position.z + playerZ);
         const playerPercent = ((position.z + playerZ) % this.segmentLength) / this.segmentLength;
         const playerY = playerSegment.p1.y + (playerSegment.p2.y - playerSegment.p1.y) * playerPercent;
+
         let dx = -(baseSegment.curve * basePercent);
         let x = 0;
         let maxY = this.height;
@@ -94,12 +93,7 @@ export class Renderer {
                 continue;
             }
 
-            this._graphics.segment(this._graphics.width, this.lanes, p1.screen.x, p1.screen.y, p1.screen.w, p2.screen.x, p2.screen.y, p2.screen.w, 1, {
-                road: '#333333',
-                grass: '#00FF00',
-                lane: '#FFFF00',
-                rumble: '#FFFFFF'
-            });
+            this._graphics.segment(this._graphics.width, this.lanes, p1.screen.x, p1.screen.y, p1.screen.w, p2.screen.x, p2.screen.y, p2.screen.w, 1, !!(segment.index % 2), segment.type);
 
             maxY = p1.screen.y;
         }

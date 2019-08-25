@@ -1,4 +1,5 @@
 import {ColorPalette} from "../interfaces";
+import {RoadType} from "../Track";
 
 export const spriteScale = 0.3 * (1 / 150);
 
@@ -48,7 +49,7 @@ export class CanvasGraphics {
         context.fill();
     }
 
-    segment(width: number, lanes: number, x1: number, y1: number, w1: number, x2: number, y2: number, w2: number, fog: number, palette: ColorPalette) {
+    segment(width: number, lanes: number, x1: number, y1: number, w1: number, x2: number, y2: number, w2: number, fog: number, even: boolean, roadType: RoadType) {
         const context = this._context;
 
         const r1 = this.rumbleWidth(w1, lanes);
@@ -57,25 +58,26 @@ export class CanvasGraphics {
         const l2 = this.laneMarkerWidth(w2, lanes);
 
         // draw the background
-        context.fillStyle = palette.grass;
+        context.fillStyle = even ? roadType.evenGrassColor : roadType.oddGrassColor;
         context.fillRect(0, y2, width, y1 - y2);
 
         // draw the rumble strips
-        this.polygon(x1 - w1 - r1, y1, x1 - w1, y1, x2 - w2, y2, x2 - w2 - r2, y2, palette.rumble);
-        this.polygon(x1 + w1 + r1, y1, x1 + w1, y1, x2 + w2, y2, x2 + w2 + r2, y2, palette.rumble);
+        this.polygon(x1 - w1 - r1, y1, x1 - w1, y1, x2 - w2, y2, x2 - w2 - r2, y2, roadType.rumbleColor);
+        this.polygon(x1 + w1 + r1, y1, x1 + w1, y1, x2 + w2, y2, x2 + w2 + r2, y2, roadType.rumbleColor);
 
         // draw the road
-        this.polygon(x1 - w1, y1, x1 + w1, y1, x2 + w2, y2, x2 - w2, y2, palette.road);
+        this.polygon(x1 - w1, y1, x1 + w1, y1, x2 + w2, y2, x2 - w2, y2, even ? roadType.evenRoadColor : roadType.oddRoadColor);
 
         // draw the road divider
-        if (palette.lane) {
+        const laneColor = even ? roadType.evenLaneColor : roadType.oddRoadColor;
+        if (laneColor) {
             const lanew1 = w1 * 2 / lanes;
             const lanew2 = w2 * 2 / lanes;
             let lanex1 = x1 - w1 + lanew1;
             let lanex2 = x2 - w2 + lanew2;
 
             for (let lane = 1; lane < lanes; lanex1 += lanew1, lanex2 += lanew2, lane++) {
-                this.polygon(lanex1 - l1 / 2, y1, lanex1 + l1 / 2, y1, lanex2 + l2 / 2, y2, lanex2 - l2 / 2, y2, palette.lane);
+                this.polygon(lanex1 - l1 / 2, y1, lanex1 + l1 / 2, y1, lanex2 + l2 / 2, y2, lanex2 - l2 / 2, y2, laneColor);
             }
         }
     }

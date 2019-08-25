@@ -28,6 +28,7 @@ export class Engine {
     private _backgroundOffset = 1;
     private _speed = 0;
     private _segmentCurve = 0;
+    centrifugal = 0.3;
 
     constructor(mountPoint: HTMLCanvasElement) {
         const context = mountPoint.getContext('2d');
@@ -44,6 +45,7 @@ export class Engine {
     }
 
     start() {
+        this._paused = false;
     }
 
     applyBackgrounds(backgrounds: Background[]) {
@@ -58,8 +60,9 @@ export class Engine {
         const offRoad = (this._position.x < -1 || this._position.x > 1);
 
         const segment = this.track.findSegment(this._position.z + this._playerZ);
-        const speedPercent = this._speed / (offRoad ? segment.offRoadMaxSpeed : segment.roadMaxSpeed);
-        const dx = deltaInSeconds * 2 / speedPercent;
+        const type = segment.type;
+        const speedPercent = this._speed / (offRoad ? type.offRoadMaxSpeed : type.onRoadMaxSpeed);
+        const dx = deltaInSeconds * 2 * speedPercent;
 
         this._gameTime += deltaInSeconds;
         this._segmentCurve = segment.curve;
@@ -73,18 +76,31 @@ export class Engine {
             this._position.x += dx;
         }
 
-        this._position.x -= dx * speedPercent * this._segmentCurve * this._speed;
+        this._position.x -= dx * speedPercent * this._segmentCurve * this.centrifugal;
 
-        if(this.keyboard.upKey) {
-            this._speed += segment.accel * deltaInSeconds;
-        } else if(this.keyboard.downKey) {
-            this._speed += segment.breaking * deltaInSeconds;
+        if (this.keyboard.upKey) {
+            this._speed += type.onRoadAccel * deltaInSeconds;
+        } else if (this.keyboard.downKey) {
+            this._speed += type.onRoadBreaking * deltaInSeconds;
         } else {
-            this._speed += segment.roadDecel * deltaInSeconds;
+            this._speed += type.onRoadDecel * deltaInSeconds;
         }
 
-        if (offRoad && this._speed > segment.offRoadMaxSpeed) {
-            this._speed += segment.offRoadDecel * deltaInSeconds;
+        if (offRoad && this._speed > type.offRoadMaxSpeed) {
+            this._speed += type.offRoadDecel * deltaInSeconds;
+        } else if(this._speed > type.onRoadMaxSpeed) {
+            this._speed = type.onRoadMaxSpeed;
+        }
+
+        if (this._speed < 0) {
+            this._speed = 0;
+        }
+
+        if (this._position.x < -2) {
+            this._position.x = -2;
+        }
+        if (this._position.x > 2) {
+            this._position.x = 2;
         }
     }
 

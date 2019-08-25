@@ -1,11 +1,28 @@
 import {Engine} from "../engine/Engine";
 import {Server} from "./Server";
 import {Assets} from "./Assets";
+import {RoadType} from "../engine/Track";
 
 export interface GameOptions {
     mountPoint: HTMLCanvasElement;
     clientId: string;
 }
+
+const streetRoad: RoadType = {
+    evenGrassColor: '#00BB00',
+    oddGrassColor: '#00AA00',
+    evenLaneColor: '#FFFF00',
+    oddLaneColor: undefined,
+    evenRoadColor: '#333333',
+    oddRoadColor: '#222222',
+    rumbleColor: '#FFFFFF',
+    offRoadDecel: 200 * -1/2,
+    offRoadMaxSpeed: 200 * 1,
+    onRoadAccel: 100,
+    onRoadBreaking: 200* -1,
+    onRoadDecel: -100,
+    onRoadMaxSpeed: 200 * 10,
+};
 
 export class Game {
     private _engine: Engine;
@@ -43,7 +60,7 @@ export class Game {
             parallaxMultiplier: 0
         }]);
 
-        this._engine.track.addStraight(100, '#ACACAC');
+        this._engine.track.addStraight(10000, streetRoad);
         this._engine.start();
 
         let last = Date.now();
