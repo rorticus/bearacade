@@ -16,13 +16,17 @@ const streetRoad: RoadType = {
     evenRoadColor: '#333333',
     oddRoadColor: '#222222',
     rumbleColor: '#FFFFFF',
-    offRoadDecel: 200 * -1/2,
+    offRoadDecel: 200 * -1 / 2,
     offRoadMaxSpeed: 200 * 1,
     onRoadAccel: 100,
-    onRoadBreaking: 200* -1,
+    onRoadBreaking: 200 * -1,
     onRoadDecel: -100,
     onRoadMaxSpeed: 200 * 10,
 };
+
+const lanes = [
+    -0.75, 0, 0.75
+];
 
 export class Game {
     private _engine: Engine;
@@ -31,6 +35,9 @@ export class Game {
 
     private _fps = 60;
     private _step = 1 / this._fps;
+    private _lane = 0;
+    private _leftKey = false;
+    private _rightKey = false;
 
     constructor({mountPoint, clientId}: GameOptions) {
         this._engine = new Engine(mountPoint);
@@ -88,5 +95,29 @@ export class Game {
 
     private _update(deltaInSeconds: number) {
         this._engine.update(deltaInSeconds);
+
+        if (this._engine.keyboard.leftKey && !this._leftKey) {
+            this._leftKey = true;
+            this._lane = Math.max(-1, this._lane - 1);
+        } else if (!this._engine.keyboard.leftKey && this._leftKey) {
+            this._leftKey = false;
+        }
+
+        if (this._engine.keyboard.rightKey && !this._rightKey) {
+            this._rightKey = true;
+            this._lane = Math.min(1, this._lane + 1);
+        } else if (!this._engine.keyboard.rightKey && this._rightKey) {
+            this._rightKey = false;
+        }
+
+        const targetX = lanes[this._lane + 1];
+
+        if (this._engine.position.x < targetX) {
+            this._engine.position.x = Math.min(this._engine.position.x + 0.1, targetX);
+        } else if (this._engine.position.x > targetX) {
+            this._engine.position.x = Math.max(this._engine.position.x - 0.1, targetX);
+        }
+
+        this._engine.speed = this._engine.renderer.segmentLength * 15;
     }
 }

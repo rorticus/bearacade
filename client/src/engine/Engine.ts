@@ -20,14 +20,14 @@ export class Engine {
     };
     private _playerZ: number;
     private _paused = true;
-    private _position: Coordinate = {
+    position: Coordinate = {
         x: 0,
         y: 0,
         z: 0
     };
     private _backgroundOffset = 1;
-    private _speed = 0;
     private _segmentCurve = 0;
+    speed = 0;
     centrifugal = 0.3;
 
     constructor(mountPoint: HTMLCanvasElement) {
@@ -57,50 +57,50 @@ export class Engine {
             return;
         }
 
-        const offRoad = (this._position.x < -1 || this._position.x > 1);
+        const offRoad = (this.position.x < -1 || this.position.x > 1);
 
-        const segment = this.track.findSegment(this._position.z + this._playerZ);
+        const segment = this.track.findSegment(this.position.z + this._playerZ);
         const type = segment.type;
-        const speedPercent = this._speed / (offRoad ? type.offRoadMaxSpeed : type.onRoadMaxSpeed);
-        const dx = deltaInSeconds * 2 * speedPercent;
+        const speedPercent = this.speed / (offRoad ? type.offRoadMaxSpeed : type.onRoadMaxSpeed);
+        // const dx = deltaInSeconds * 2 * speedPercent;
 
         this._gameTime += deltaInSeconds;
         this._segmentCurve = segment.curve;
         this._backgroundOffset = this._segmentCurve * speedPercent;
 
-        this._position.z = this._position.z + deltaInSeconds * this._speed;
+        this.position.z = this.position.z + deltaInSeconds * this.speed;
 
-        if (this.keyboard.leftKey) {
-            this._position.x -= dx;
-        } else if (this.keyboard.rightKey) {
-            this._position.x += dx;
+        // if (this.keyboard.leftKey) {
+        //     this.position.x -= dx;
+        // } else if (this.keyboard.rightKey) {
+        //     this.position.x += dx;
+        // }
+        //
+        // this.position.x -= dx * speedPercent * this._segmentCurve * this.centrifugal;
+        //
+        // if (this.keyboard.upKey) {
+        //     this.speed += type.onRoadAccel * deltaInSeconds;
+        // } else if (this.keyboard.downKey) {
+        //     this.speed += type.onRoadBreaking * deltaInSeconds;
+        // } else {
+        //     this.speed += type.onRoadDecel * deltaInSeconds;
+        // }
+
+        if (offRoad && this.speed > type.offRoadMaxSpeed) {
+            this.speed += type.offRoadDecel * deltaInSeconds;
+        } else if(this.speed > type.onRoadMaxSpeed) {
+            this.speed = type.onRoadMaxSpeed;
         }
 
-        this._position.x -= dx * speedPercent * this._segmentCurve * this.centrifugal;
-
-        if (this.keyboard.upKey) {
-            this._speed += type.onRoadAccel * deltaInSeconds;
-        } else if (this.keyboard.downKey) {
-            this._speed += type.onRoadBreaking * deltaInSeconds;
-        } else {
-            this._speed += type.onRoadDecel * deltaInSeconds;
+        if (this.speed < 0) {
+            this.speed = 0;
         }
 
-        if (offRoad && this._speed > type.offRoadMaxSpeed) {
-            this._speed += type.offRoadDecel * deltaInSeconds;
-        } else if(this._speed > type.onRoadMaxSpeed) {
-            this._speed = type.onRoadMaxSpeed;
+        if (this.position.x < -2) {
+            this.position.x = -2;
         }
-
-        if (this._speed < 0) {
-            this._speed = 0;
-        }
-
-        if (this._position.x < -2) {
-            this._position.x = -2;
-        }
-        if (this._position.x > 2) {
-            this._position.x = 2;
+        if (this.position.x > 2) {
+            this.position.x = 2;
         }
     }
 
@@ -109,6 +109,6 @@ export class Engine {
         this.renderer.renderBackground(this._backgroundOffset);
 
         // road
-        this.renderer.renderRoad(this._camera, this.track, this._position, this._playerZ);
+        this.renderer.renderRoad(this._camera, this.track, this.position, this._playerZ);
     }
 }
