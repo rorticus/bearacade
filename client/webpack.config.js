@@ -32,11 +32,17 @@ html, body {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/
+            },
+            {
+                test: /\.(png|svg|jpg|gif|mp3)$/,
+                use: [
+                    'file-loader'
+                ]
             }
         ]
     },
     resolve: {
-        extensions: [ '.tsx', '.ts', '.js' ]
+        extensions: ['.tsx', '.ts', '.js']
     },
     output: {
         filename: '[name].bundle.js',

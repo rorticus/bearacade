@@ -2,8 +2,29 @@ import {ColorPalette} from "../interfaces";
 
 export const spriteScale = 0.3 * (1 / 150);
 
+export interface CanvasGraphicsOptions {
+    context: CanvasRenderingContext2D;
+    width: number;
+    height: number;
+}
+
 export class CanvasGraphics {
-    constructor(public context: CanvasRenderingContext2D) {
+    private _context: CanvasRenderingContext2D;
+    private _width: number;
+    private _height: number;
+
+    constructor(options: CanvasGraphicsOptions) {
+        this._context = options.context;
+        this._width = options.width;
+        this._height = options.height;
+    }
+
+    get width() {
+        return this._width;
+    }
+
+    get height() {
+        return this._height;
     }
 
     rumbleWidth(projectedRoadWidth: number, lanes: number) {
@@ -15,7 +36,7 @@ export class CanvasGraphics {
     }
 
     polygon(x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, x4: number, y4: number, color: string) {
-        const context = this.context;
+        const context = this._context;
 
         context.fillStyle = color;
         context.beginPath();
@@ -28,7 +49,7 @@ export class CanvasGraphics {
     }
 
     segment(width: number, lanes: number, x1: number, y1: number, w1: number, x2: number, y2: number, w2: number, fog: number, palette: ColorPalette) {
-        const context = this.context;
+        const context = this._context;
 
         const r1 = this.rumbleWidth(w1, lanes);
         const r2 = this.rumbleWidth(w2, lanes);
@@ -60,7 +81,7 @@ export class CanvasGraphics {
     }
 
     sprite(width: number, height: number, roadWidth: number, image: any, scale: number, destX: number, destY: number, offsetX?: number, offsetY?: number, clipY?: number) {
-        const context = this.context;
+        const context = this._context;
 
         const destW = (image.width * scale * width / 2) * (spriteScale * roadWidth);
         const destH = (image.height * scale * width / 2) * (spriteScale * roadWidth);
@@ -82,7 +103,7 @@ export class CanvasGraphics {
     }
 
     background(background: any, width: number, height: number, offset: number) {
-        const context = this.context;
+        const context = this._context;
 
         const imageW = background.width / 2;
         const imageH = background.height;
@@ -110,7 +131,7 @@ export class CanvasGraphics {
 
     score(width: number, height: number, score: number) {
         const str = String(score);
-        const context = this.context;
+        const context = this._context;
 
         context.fillStyle = '#ffffff';
         context.font = '72px Arial Black';
@@ -122,7 +143,7 @@ export class CanvasGraphics {
 
     timer(width: number, height: number, timeLeft: number) {
         const str = String(timeLeft);
-        const context = this.context;
+        const context = this._context;
 
         const x = width - 100;
         const y = 75;

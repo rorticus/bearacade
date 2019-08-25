@@ -12,6 +12,7 @@ export interface ColorPalette {
 export interface Camera {
     height: number;
     fieldOfView: number;
+    depth: number;
 }
 
 export interface Coordinate {

@@ -1,4 +1,4 @@
-import {ColorPalette, Coordinate} from "./interfaces";
+import {Coordinate} from "./interfaces";
 
 export interface SpriteCollider {
     (sprite: Sprite): void;
@@ -25,7 +25,13 @@ export interface Segment {
     p2: Coordinate;
     curve: number;
     sprites: Sprite[];
-    palette: ColorPalette;
+    color: string;
+    accel: number;
+    breaking: number;
+    roadDecel: number;
+    offRoadDecel: number;
+    roadMaxSpeed: number;
+    offRoadMaxSpeed: number;
 }
 
 export enum Length {
@@ -61,81 +67,78 @@ function easeInOut(a: number, b: number, percent: number) {
     return a + (b - a) * ((-Math.cos(percent * Math.PI) / 2) + 0.5);
 }
 
+const segmentLength = 200;
+
 export class Track {
     segments: Segment[] = [];
     length: number = 0;
 
-    constructor(public segmentLength: number, public rumbleLength: number, public lightPalette: ColorPalette, public darkPalette: ColorPalette) {
+    constructor() {
     }
 
     findSegment(z: number): Segment {
-        return this.segments[Math.floor(z / this.segmentLength) % this.segments.length];
+        return this.segments[Math.floor(z / segmentLength) % this.segments.length];
     }
 
     lastY() {
         return (this.segments.length === 0) ? 0 : this.segments[this.segments.length - 1].p2.y;
     }
 
-    addSegment(curve: number, y: number) {
+    addSegment(curve: number, y: number, color: string) {
         const n = this.segments.length;
         this.segments.push({
             index: n,
-            p1: {x: 0, y: this.lastY(), z: n * this.segmentLength},
-            p2: {x: 0, y: y, z: (n + 1) * this.segmentLength},
+            p1: {x: 0, y: this.lastY(), z: n * segmentLength},
+            p2: {x: 0, y: y, z: (n + 1) * segmentLength},
             curve: curve,
             sprites: [],
-            palette: Math.floor(n / this.rumbleLength) % 2 ? this.darkPalette : this.lightPalette
+            color,
+            accel: 1 / 5,
+            breaking: -1,
+            roadDecel: -1 / 5,
+            offRoadDecel: -1 / 2,
+            roadMaxSpeed: 3,
+            offRoadMaxSpeed: 1
         });
     }
 
-    addRoad(enter: number, hold: number, leave: number, curve: number, y: number = 0) {
+    addRoad(enter: number, hold: number, leave: number, curve: number, y: number = 0, color: string) {
         const startY = this.lastY();
-        const endY = startY + Math.floor(y * this.segmentLength);
+        const endY = startY + Math.floor(y * segmentLength);
         const total = enter + hold + leave;
         for (let n = 0; n < enter; n++) {
-            this.addSegment(easeIn(0, curve, n / enter), easeInOut(startY, endY, n / total));
+            this.addSegment(easeIn(0, curve, n / enter), easeInOut(startY, endY, n / total), color);
         }
         for (let n = 0; n < hold; n++) {
-            this.addSegment(curve, easeInOut(startY, endY, (enter + n) / total));
+            this.addSegment(curve, easeInOut(startY, endY, (enter + n) / total), color);
         }
         for (let n = 0; n < leave; n++) {
-            this.addSegment(easeInOut(curve, 0, n / leave), easeInOut(startY, endY, (enter + hold + n) / total));
+            this.addSegment(easeInOut(curve, 0, n / leave), easeInOut(startY, endY, (enter + hold + n) / total), color);
         }
     }
 
-    addLowRollingHills(num: number, height: number) {
-        this.addRoad(num, num, num, 0, height / 2);
-        this.addRoad(num, num, num, 0, -height);
-        this.addRoad(num, num, num, 0, height);
-        this.addRoad(num, num, num, 0, 0);
-        this.addRoad(num, num, num, 0, height / 2);
-        this.addRoad(num, num, num, 0, 0);
+    addLowRollingHills(num: number, height: number, color: string) {
+        this.addRoad(num, num, num, 0, height / 2, color);
+        this.addRoad(num, num, num, 0, -height, color);
+        this.addRoad(num, num, num, 0, height, color);
+        this.addRoad(num, num, num, 0, 0, color);
+        this.addRoad(num, num, num, 0, height / 2, color);
+        this.addRoad(num, num, num, 0, 0, color);
     }
 
-    addSCurve() {
-        this.addRoad(Length.Medium, Length.Medium, Length.Medium, -Curve.Easy);
-        this.addRoad(Length.Medium, Length.Medium, Length.Medium, Curve.Medium);
-        this.addRoad(Length.Medium, Length.Medium, Length.Medium, Curve.Easy);
-        this.addRoad(Length.Medium, Length.Medium, Length.Medium, -Curve.Easy);
-        this.addRoad(Length.Medium, Length.Medium, Length.Medium, -Curve.Medium);
+    addSCurve(color: string) {
+        this.addRoad(Length.Medium, Length.Medium, Length.Medium, -Curve.Easy, 0, color);
+        this.addRoad(Length.Medium, Length.Medium, Length.Medium, Curve.Medium, 0, color);
+        this.addRoad(Length.Medium, Length.Medium, Length.Medium, Curve.Easy, 0, color);
+        this.addRoad(Length.Medium, Length.Medium, Length.Medium, -Curve.Easy, 0, color);
+        this.addRoad(Length.Medium, Length.Medium, Length.Medium, -Curve.Medium, 0, color);
     }
 
-    addStraight(num: number) {
-        this.addRoad(num, num, num, 0);
+    addStraight(num: number, color: string) {
+        this.addRoad(num, num, num, 0, 0, color);
     }
 
-    addCurve(num: number, curve: number) {
-        this.addRoad(num, num, num, curve);
-    }
-
-    addSprite(image: any, index: number, offset: number, isSolid = true, yOffset = -1, collider?: SpriteCollider) {
-        this.segments[index].sprites.push({
-            image,
-            offset,
-            isSolid,
-            yOffset,
-            collider,
-            hidden: false
-        });
+    addCurve(num: number, curve: number, color: string) {
+        this.addRoad(num, num, num, curve, 0, color);
     }
 }

@@ -15,4 +15,7 @@ const game = new Game({
     mountPoint: canvas,
     clientId: location.hash.substr(1)
 });
-game.start();
+
+(async function () {
+    await game.start();
+})();
