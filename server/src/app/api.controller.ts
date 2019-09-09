@@ -1,21 +1,20 @@
-import {Controller, Get, Post} from "@nestjs/common";
-import {DatabaseService} from "./database.service";
+import { Controller, Get, Post } from "@nestjs/common";
+import { DatabaseService } from "./database.service";
 
-@Controller('api')
+@Controller("api")
 export class ApiController {
-    constructor(private _databaseService: DatabaseService) {
-    }
+	constructor(private _databaseService: DatabaseService) {}
 
-    @Get('highscores')
-    getHighScores() {
-        return this._databaseService.getHighScores();
-    }
+	@Get("highscores")
+	getHighScores() {
+		return this._databaseService.getHighScores();
+	}
 
-    @Post('highscores')
-    addHighscore() {
-        this._databaseService.addHighScore({
-            name: 'me',
-            score: 125
-        });
-    }
+	@Post("highscores")
+	addHighscore() {
+		this._databaseService.addHighScore({
+			name: "me",
+			score: 125
+		});
+	}
 }

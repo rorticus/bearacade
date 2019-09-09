@@ -12,6 +12,10 @@
     "type": "git",
     "url": "git+https://github.com/rorticus/bearacade.git"
   },
+  "prettier": {
+    "tabWidth": 4,
+    "useTabs": true
+  },
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -19,7 +23,8 @@
   },
   "homepage": "https://github.com/rorticus/bearacade#readme",
   "devDependencies": {
-    "concurrently": "^4.1.1"
+    "concurrently": "^4.1.1",
+    "prettier": "^1.18.2"
   },
   "dependencies": {}
 }

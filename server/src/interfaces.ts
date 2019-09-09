@@ -1,4 +1,4 @@
 export interface HighScore {
-    name: string;
-    score: number;
+	name: string;
+	score: number;
 }

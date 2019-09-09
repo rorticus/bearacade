@@ -1,22 +1,22 @@
 export interface Asset {
-    name: string;
+	name: string;
 }
 
 export interface ColorPalette {
-    road: string;
-    grass: string;
-    rumble: string;
-    lane: string;
+	road: string;
+	grass: string;
+	rumble: string;
+	lane: string;
 }
 
 export interface Camera {
-    height: number;
-    fieldOfView: number;
-    depth: number;
+	height: number;
+	fieldOfView: number;
+	depth: number;
 }
 
 export interface Coordinate {
-    x: number;
-    y: number;
-    z: number;
+	x: number;
+	y: number;
+	z: number;
 }
