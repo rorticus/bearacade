@@ -1,7 +1,7 @@
-import { Engine } from "../engine/Engine";
+import { Engine } from "../../../engine/Engine";
 import { Server } from "./Server";
 import { Assets } from "./Assets";
-import { RoadType } from "../engine/Track";
+import { RoadType } from "../../../engine/Track";
 
 export interface GameOptions {
 	mountPoint: HTMLCanvasElement;

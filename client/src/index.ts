@@ -1,4 +1,4 @@
-import { Engine } from "./engine/Engine";
+import { Engine } from "../../engine/Engine";
 import { Game } from "./game/Game";
 
 const mountPoint = document.getElementById("app");
