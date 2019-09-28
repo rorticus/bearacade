@@ -19,7 +19,8 @@ export class Renderer {
 		return this._graphics.height;
 	}
 
-	private _backgrounds: Background[];
+	private _backgrounds: Background[] = [];
+
 	set backgrounds(backgrounds: Background[]) {
 		this._backgrounds = backgrounds;
 	}
@@ -82,6 +83,8 @@ export class Renderer {
 	}
 
 	renderBackground(offset: number) {
+		this._graphics.fill('#000000');
+
 		this._backgrounds.forEach(background => {
 			this._graphics.background(
 				background.asset,

@@ -2,27 +2,13 @@ import { Engine } from "../../../engine/Engine";
 import { Server } from "./Server";
 import { Assets } from "./Assets";
 import { RoadType } from "../../../engine/Track";
+import { Level } from "./levels/Level";
+import { Mountains } from "./levels/Mountains";
 
 export interface GameOptions {
 	mountPoint: HTMLCanvasElement;
 	clientId: string;
 }
-
-const streetRoad: RoadType = {
-	evenGrassColor: "#00BB00",
-	oddGrassColor: "#00AA00",
-	evenLaneColor: "#FFFF00",
-	oddLaneColor: undefined,
-	evenRoadColor: "#333333",
-	oddRoadColor: "#222222",
-	rumbleColor: "#FFFFFF",
-	offRoadDecel: (200 * -1) / 2,
-	offRoadMaxSpeed: 200 * 1,
-	onRoadAccel: 100,
-	onRoadBreaking: 200 * -1,
-	onRoadDecel: -100,
-	onRoadMaxSpeed: 200 * 10
-};
 
 const lanes = [-0.75, 0, 0.75];
 
@@ -30,6 +16,7 @@ export class Game {
 	private _engine: Engine;
 	private _server: Server;
 	private _assets: Assets;
+	private _level: Level;
 
 	private _fps = 60;
 	private _step = 1 / this._fps;
@@ -41,6 +28,8 @@ export class Game {
 		this._engine = new Engine(mountPoint);
 		this._server = new Server(clientId);
 		this._assets = new Assets();
+
+		this._level = new Mountains();
 
 		this._engine.renderer.lanes = 3;
 	}
@@ -67,7 +56,7 @@ export class Game {
 			}
 		]);
 
-		this._engine.track.addStraight(10000, streetRoad);
+		this._level.generateTrack(this._engine.track);
 		this._engine.start();
 
 		let last = Date.now();
@@ -125,5 +114,15 @@ export class Game {
 		}
 
 		this._engine.speed = this._engine.renderer.segmentLength * 15;
+
+		const playerSegment = this._engine.track.findSegment(
+			this._engine.position.z
+		);
+		while (
+			playerSegment.index + this._engine.renderer.drawDistance >
+			this._engine.track.segments.length
+		) {
+			this._level.generateTrack(this._engine.track);
+		}
 	}
 }

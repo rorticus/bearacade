@@ -278,4 +278,9 @@ export class CanvasGraphics {
 		context.fillText(str, x, y);
 		context.strokeText(str, x, y);
 	}
+
+	fill(color: string) {
+		this._context.fillStyle = color;
+		this._context.fillRect(0, 0, this._width, this._height);
+	}
 }
