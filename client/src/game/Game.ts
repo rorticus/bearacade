@@ -29,7 +29,7 @@ export class Game {
 		this._server = new Server(clientId);
 		this._assets = new Assets();
 
-		this._level = new Mountains();
+		this._level = new Mountains(this._assets);
 
 		this._engine.renderer.lanes = 3;
 	}

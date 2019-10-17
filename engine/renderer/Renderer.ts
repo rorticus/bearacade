@@ -115,6 +115,8 @@ export class Renderer {
 		let x = 0;
 		let maxY = this.height;
 
+		const segmentCoords: Record<number, { p1: ReturnType<Renderer['project']>, p2: ReturnType<Renderer['project']>, clip: number }> = {};
+
 		for (let n = 0; n < this.drawDistance; n++) {
 			const segment =
 				track.segments[(baseSegment.index + n) % track.segments.length];
@@ -139,6 +141,8 @@ export class Renderer {
 				this.height,
 				this.roadWidth
 			);
+
+			segmentCoords[n] = {p1, p2, clip: maxY};
 
 			x += dx;
 			dx += segment.curve;
@@ -166,6 +170,24 @@ export class Renderer {
 			);
 
 			maxY = p1.screen.y;
+		}
+
+		for (let n = (this.drawDistance - 1); n > 0; n--) {
+			const segment = track.segments[(baseSegment.index + n) % track.segments.length];
+
+			segment.sprites.forEach(sprite => {
+				if (sprite.hidden) {
+					return;
+				}
+
+				const coords = segmentCoords[n];
+
+				const spriteScale = coords.p1.screen.scale;
+				const spriteX = coords.p1.screen.x + (spriteScale * sprite.offset * this.roadWidth * this._graphics.width / 2);
+				const spriteY = coords.p1.screen.y;
+
+				sprite.lastRenderPosition = this._graphics.sprite(this._graphics.width, this.height, this.roadWidth, sprite.image, spriteScale, spriteX, spriteY, -0.5, sprite.yOffset, coords.clip);
+			});
 		}
 	}
 }

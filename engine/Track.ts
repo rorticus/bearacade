@@ -205,4 +205,20 @@ export class Track {
 	addCurve(num: number, curve: number, roadType: RoadType) {
 		this.addRoad(num, num, num, curve, 0, roadType);
 	}
+
+	addStaticSprite(z: number, xOffset: number, yOffset: number, image: any) {
+		const segment = this.findSegment(z);
+
+		segment.sprites.push({
+			image,
+			offset: xOffset,
+			isSolid: true,
+			yOffset: yOffset,
+			hidden: false
+		});
+	}
+
+	lastZ() {
+		return this.segments.length > 0 ? this.segments[this.segments.length - 1].p2.z : 0;
+	}
 }
