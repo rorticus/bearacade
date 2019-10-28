@@ -54,7 +54,7 @@ export class Mountains implements Level {
 
 		const spriteCount = 300;
 
-		const trees = ['pineTree1', 'pineTree2'];
+		const trees = ['fir1'];
 
 		for (let i = 0; i < spriteCount; i++) {
             const side = Math.random() * 100 < 50 ? -1 : 1;
@@ -64,7 +64,7 @@ export class Mountains implements Level {
 			track.addStaticSprite(
 				startZ + (endZ - startZ) * Math.random(),
 				side * (1.5 + Math.random() * 6),
-				-0.95,
+				-1,
 				this.assets.getImage(trees[treeIndex])
 			);
 		}

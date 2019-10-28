@@ -3,9 +3,12 @@ import { Game } from "./game/Game";
 
 const mountPoint = document.getElementById("app");
 const canvas = document.createElement("canvas");
-canvas.width = 640;
-canvas.height = 480;
+canvas.width = 320;
+canvas.height = 240;
 
+canvas.style.width = "1024px";
+canvas.style.height = "768px";
+canvas.style.imageRendering = 'optimizeSpeed';
 canvas.classList.add("main");
 
 mountPoint.innerHTML = "";

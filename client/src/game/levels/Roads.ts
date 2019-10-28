@@ -1,12 +1,12 @@
 import {RoadType} from "../../../../engine/Track";
 
 export const streetRoad: RoadType = {
-    evenGrassColor: "#00BB00",
-    oddGrassColor: "#00AA00",
+    oddGrassColor: "#914634",
+    evenGrassColor: "#914634",
     evenLaneColor: "#FFFF00",
     oddLaneColor: undefined,
-    evenRoadColor: "#333333",
-    oddRoadColor: "#222222",
+    evenRoadColor: "#000000",
+    oddRoadColor: "#000000",
     rumbleColor: "#FFFFFF",
     offRoadDecel: (200 * -1) / 2,
     offRoadMaxSpeed: 200 * 1,

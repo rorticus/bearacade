@@ -1,7 +1,7 @@
 import { ColorPalette } from "../interfaces";
 import { RoadType } from "../Track";
 
-export const spriteScale = 0.3 * (1 / 150);
+export const spriteScale = (1 / 100);
 
 export interface CanvasGraphicsOptions {
 	context: CanvasRenderingContext2D;

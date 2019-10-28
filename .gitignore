@@ -6,3 +6,4 @@ server/node_modules
 server/build
 tools/map-editor/build
 tools/map-editor/node_modules
+.DS_Store
