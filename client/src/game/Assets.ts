@@ -2,7 +2,8 @@ declare function require(path: string): string;
 
 const images: Record<string, string> = {
 	sky: require("./assets/sky.png"),
-	fir1: require('./assets/fir1.png')
+	fir1: require('./assets/fir1.png'),
+	mountainsBack: require('./assets/mountains-back.png')
 };
 
 export class Assets {

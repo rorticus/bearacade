@@ -49,12 +49,7 @@ export class Game {
 
 		await this.preload();
 
-		this._engine.applyBackgrounds([
-			{
-				asset: this._assets.getImage("sky"),
-				parallaxMultiplier: 0
-			}
-		]);
+		this._engine.applyBackgrounds(this._level.getBackgrounds());
 
 		this._level.generateTrack(this._engine.track);
 		this._engine.start();

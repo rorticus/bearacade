@@ -4,7 +4,7 @@ import { Level } from "./Level";
 import { Assets } from "../Assets";
 
 export class Mountains implements Level {
-	constructor(private assets: Assets) {}
+	constructor(private assets: Assets) { }
 
 	generateTrack(track: Track) {
 		const size = 300;
@@ -57,9 +57,9 @@ export class Mountains implements Level {
 		const trees = ['fir1'];
 
 		for (let i = 0; i < spriteCount; i++) {
-            const side = Math.random() * 100 < 50 ? -1 : 1;
+			const side = Math.random() * 100 < 50 ? -1 : 1;
 
-            const treeIndex = Math.floor(Math.random() * trees.length);
+			const treeIndex = Math.floor(Math.random() * trees.length);
 
 			track.addStaticSprite(
 				startZ + (endZ - startZ) * Math.random(),
@@ -68,5 +68,18 @@ export class Mountains implements Level {
 				this.assets.getImage(trees[treeIndex])
 			);
 		}
+	}
+
+	getBackgrounds() {
+		return [
+			{
+				asset: this.assets.getImage("sky"),
+				parallaxMultiplier: 0
+			},
+			{
+				asset: this.assets.getImage("mountainsBack"),
+				parallaxMultiplier: 0.5
+			}
+		]
 	}
 }
