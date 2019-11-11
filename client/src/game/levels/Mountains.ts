@@ -78,7 +78,11 @@ export class Mountains implements Level {
 			},
 			{
 				asset: this.assets.getImage("mountainsBack"),
-				parallaxMultiplier: 0.5
+				parallaxMultiplier: 0.01
+			},
+			{
+				asset: this.assets.getImage("mountainsFront"),
+				parallaxMultiplier: 0.05
 			}
 		]
 	}

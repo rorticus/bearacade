@@ -90,7 +90,7 @@ export class Renderer {
 				background.asset,
 				this._graphics.width,
 				this._graphics.height,
-				background.parallaxMultiplier
+				offset * background.parallaxMultiplier
 			);
 		});
 	}
