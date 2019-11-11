@@ -54,7 +54,7 @@ export class Mountains implements Level {
 
 		const spriteCount = 300;
 
-		const trees = ['fir1'];
+		const trees = ['fir1', 'fir1', 'fir1', 'fir1', 'fir1', 'rock'];
 
 		for (let i = 0; i < spriteCount; i++) {
 			const side = Math.random() * 100 < 50 ? -1 : 1;
