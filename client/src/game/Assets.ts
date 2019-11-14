@@ -5,7 +5,8 @@ const images: Record<string, string> = {
 	fir1: require('./assets/fir1.png'),
 	mountainsBack: require('./assets/mountains-back.png'),
 	mountainsFront: require('./assets/mountains-front.png'),
-	rock: require('./assets/rock.png')
+	rock: require('./assets/rock.png'),
+	obstacle: require('./assets/obstacle.png')
 };
 
 export class Assets {

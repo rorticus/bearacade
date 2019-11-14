@@ -209,6 +209,10 @@ export class Track {
 	addStaticSprite(z: number, xOffset: number, yOffset: number, image: any) {
 		const segment = this.findSegment(z);
 
+		if(image === undefined) {
+			throw new Error('undefined image');
+		}
+
 		segment.sprites.push({
 			image,
 			offset: xOffset,

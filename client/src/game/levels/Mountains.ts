@@ -2,9 +2,10 @@ import { Curve, Hill, Track } from "../../../../engine/Track";
 import { streetRoad } from "./Roads";
 import { Level } from "./Level";
 import { Assets } from "../Assets";
+import { arrayChoice, chance, choice } from "../helpers";
 
 export class Mountains implements Level {
-	constructor(private assets: Assets) { }
+	constructor(private assets: Assets) {}
 
 	generateTrack(track: Track) {
 		const size = 300;
@@ -54,19 +55,34 @@ export class Mountains implements Level {
 
 		const spriteCount = 300;
 
-		const trees = ['fir1', 'fir1', 'fir1', 'fir1', 'fir1', 'rock'];
-
 		for (let i = 0; i < spriteCount; i++) {
-			const side = Math.random() * 100 < 50 ? -1 : 1;
+			const side = chance(0.5) ? -1 : 1;
 
-			const treeIndex = Math.floor(Math.random() * trees.length);
+			const sprite = arrayChoice(['fir1', 50], ['rock', 50]);
 
 			track.addStaticSprite(
 				startZ + (endZ - startZ) * Math.random(),
 				side * (1.5 + Math.random() * 6),
 				-1,
-				this.assets.getImage(trees[treeIndex])
+				this.assets.getImage(sprite)
 			);
+		}
+
+		// divide the new track into segments
+		const granularity = 300;
+		const segments = Math.floor((endZ - startZ) / granularity);
+
+		for (let i = 0, z = startZ; i < segments; i++, z += granularity) {
+			if (chance(0.08)) {
+				const side = arrayChoice([-0.5, 33], [0, 33], [0.5, 33]);
+
+				track.addStaticSprite(
+					z,
+					side,
+					-1,
+					this.assets.getImage('obstacle')
+				);
+			}
 		}
 	}
 
@@ -84,6 +100,6 @@ export class Mountains implements Level {
 				asset: this.assets.getImage("mountainsFront"),
 				parallaxMultiplier: 0.05
 			}
-		]
+		];
 	}
 }
