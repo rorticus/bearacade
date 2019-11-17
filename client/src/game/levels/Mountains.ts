@@ -80,7 +80,7 @@ export class Mountains implements Level {
 					z,
 					side,
 					-1,
-					this.assets.getImage('obstacle')
+					this.assets.getImage('oilDrum')
 				);
 			}
 		}
