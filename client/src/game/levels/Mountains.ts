@@ -74,7 +74,7 @@ export class Mountains implements Level {
 
 		for (let i = 0, z = startZ; i < segments; i++, z += granularity) {
 			if (chance(0.08)) {
-				const side = arrayChoice([-0.5, 33], [0, 33], [0.5, 33]);
+				const side = arrayChoice([-0.66, 33], [0, 33], [0.66, 33]);
 
 				track.addStaticSprite(
 					z,
