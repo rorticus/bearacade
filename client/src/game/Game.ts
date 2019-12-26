@@ -50,6 +50,7 @@ export class Game {
 		await this.preload();
 
 		this._engine.applyBackgrounds(this._level.getBackgrounds());
+		this._engine.playerSprite = this._assets.getImage('truck');
 
 		this._level.generateTrack(this._engine.track);
 		this._engine.start();

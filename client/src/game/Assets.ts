@@ -7,7 +7,8 @@ const images: Record<string, string> = {
 	mountainsFront: require('./assets/mountains-front.png'),
 	rock: require('./assets/rock.png'),
 	obstacle: require('./assets/obstacle.png'),
-	oilDrum: require('./assets/oil-drum.png')
+	oilDrum: require('./assets/oil-drum.png'),
+	truck: require('./assets/truck.png')
 };
 
 export class Assets {

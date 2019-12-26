@@ -4,6 +4,7 @@ import { Background, Renderer } from "./renderer/Renderer";
 import { Camera, Coordinate } from "./interfaces";
 import { Track } from "./Track";
 import { Keyboard } from "./input/Keyboard";
+import { player } from "../old-client/src/Assets";
 
 export class Engine {
 	sound: Sound;
@@ -29,6 +30,7 @@ export class Engine {
 	private _segmentCurve = 0;
 	speed = 0;
 	centrifugal = 0.3;
+	playerSprite: any;
 
 	constructor(mountPoint: HTMLCanvasElement) {
 		const context = mountPoint.getContext("2d");
@@ -118,5 +120,14 @@ export class Engine {
 			this.position,
 			this._playerZ
 		);
+
+		// player
+		if (this.playerSprite) {
+			this.renderer.renderPlayer(
+				this._camera,
+				this._playerZ,
+				this.playerSprite
+			);
+		}
 	}
 }

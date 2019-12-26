@@ -18,6 +18,8 @@ export class CanvasGraphics {
 		this._context = options.context;
 		this._width = options.width;
 		this._height = options.height;
+
+		options.context.imageSmoothingEnabled = false;
 	}
 
 	get width() {

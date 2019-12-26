@@ -1,6 +1,7 @@
 import { CanvasGraphics } from "./CanvasGraphics";
 import { Camera, Coordinate } from "../interfaces";
 import { Track } from "../Track";
+import { player } from "../../old-client/src/Assets";
 
 export interface Background {
 	asset: CanvasImageSource;
@@ -83,7 +84,7 @@ export class Renderer {
 	}
 
 	renderBackground(offset: number) {
-		this._graphics.fill('#000000');
+		this._graphics.fill("#000000");
 
 		this._backgrounds.forEach(background => {
 			this._graphics.background(
@@ -115,7 +116,14 @@ export class Renderer {
 		let x = 0;
 		let maxY = this.height;
 
-		const segmentCoords: Record<number, { p1: ReturnType<Renderer['project']>, p2: ReturnType<Renderer['project']>, clip: number }> = {};
+		const segmentCoords: Record<
+			number,
+			{
+				p1: ReturnType<Renderer["project"]>;
+				p2: ReturnType<Renderer["project"]>;
+				clip: number;
+			}
+		> = {};
 
 		for (let n = 0; n < this.drawDistance; n++) {
 			const segment =
@@ -142,7 +150,7 @@ export class Renderer {
 				this.roadWidth
 			);
 
-			segmentCoords[n] = {p1, p2, clip: maxY};
+			segmentCoords[n] = { p1, p2, clip: maxY };
 
 			x += dx;
 			dx += segment.curve;
@@ -172,8 +180,9 @@ export class Renderer {
 			maxY = p1.screen.y;
 		}
 
-		for (let n = (this.drawDistance - 1); n > 0; n--) {
-			const segment = track.segments[(baseSegment.index + n) % track.segments.length];
+		for (let n = this.drawDistance - 1; n > 0; n--) {
+			const segment =
+				track.segments[(baseSegment.index + n) % track.segments.length];
 
 			segment.sprites.forEach(sprite => {
 				if (sprite.hidden) {
@@ -183,11 +192,42 @@ export class Renderer {
 				const coords = segmentCoords[n];
 
 				const spriteScale = coords.p1.screen.scale;
-				const spriteX = coords.p1.screen.x + (spriteScale * sprite.offset * this.roadWidth * this._graphics.width / 2);
+				const spriteX =
+					coords.p1.screen.x +
+					(spriteScale *
+						sprite.offset *
+						this.roadWidth *
+						this._graphics.width) /
+						2;
 				const spriteY = coords.p1.screen.y;
 
-				sprite.lastRenderPosition = this._graphics.sprite(this._graphics.width, this.height, this.roadWidth, sprite.image, spriteScale, spriteX, spriteY, -0.5, sprite.yOffset, coords.clip);
+				sprite.lastRenderPosition = this._graphics.sprite(
+					this._graphics.width,
+					this.height,
+					this.roadWidth,
+					sprite.image,
+					spriteScale,
+					spriteX,
+					spriteY,
+					-0.5,
+					sprite.yOffset,
+					coords.clip
+				);
 			});
 		}
+	}
+
+	renderPlayer(camera: Camera, playerZ: number, sprite: any) {
+		this._graphics.sprite(
+			this._graphics.width,
+			this._graphics.height,
+			this.roadWidth,
+			sprite,
+			camera.depth / playerZ,
+			this._graphics.width / 2,
+			this._graphics.height,
+			-0.5,
+			-1
+		);
 	}
 }
