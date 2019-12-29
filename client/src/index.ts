@@ -1,4 +1,3 @@
-import { Engine } from "../../engine/Engine";
 import { Game } from "./game/Game";
 
 const mountPoint = document.getElementById("app");
@@ -8,7 +7,7 @@ canvas.height = 240;
 
 canvas.style.width = "1024px";
 canvas.style.height = "768px";
-canvas.style.imageRendering = 'optimizeSpeed';
+canvas.style.imageRendering = "optimizeSpeed";
 canvas.classList.add("main");
 
 mountPoint.innerHTML = "";

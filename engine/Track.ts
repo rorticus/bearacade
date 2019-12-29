@@ -1,14 +1,8 @@
 import { Coordinate } from "./interfaces";
 
-export interface SpriteCollider {
-	(sprite: Sprite): void;
-}
-
 export interface Sprite {
 	image: any;
 	offset: number;
-	collider?: SpriteCollider;
-	isSolid: boolean;
 	yOffset: number;
 	hidden: boolean;
 	lastRenderPosition?: {
@@ -17,6 +11,8 @@ export interface Sprite {
 		w: number;
 		h: number;
 	};
+	flags: number;
+	data: any;
 }
 
 export type RoadTexture = string;
@@ -213,13 +209,18 @@ export class Track {
 			throw new Error('undefined image');
 		}
 
-		segment.sprites.push({
+		const sprite: Sprite = {
 			image,
 			offset: xOffset,
-			isSolid: true,
 			yOffset: yOffset,
-			hidden: false
-		});
+			hidden: false,
+			flags: 0,
+			data: undefined
+		};
+
+		segment.sprites.push(sprite);
+
+		return sprite;
 	}
 
 	lastZ() {

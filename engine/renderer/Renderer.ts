@@ -8,6 +8,8 @@ export interface Background {
 	parallaxMultiplier: number;
 }
 
+export const spriteScale = (1 / 100);
+
 export class Renderer {
 	private _graphics: CanvasGraphics;
 
@@ -191,10 +193,9 @@ export class Renderer {
 
 				const coords = segmentCoords[n];
 
-				const spriteScale = coords.p1.screen.scale;
 				const spriteX =
 					coords.p1.screen.x +
-					(spriteScale *
+					(coords.p1.screen.scale *
 						sprite.offset *
 						this.roadWidth *
 						this._graphics.width) /
@@ -202,11 +203,12 @@ export class Renderer {
 				const spriteY = coords.p1.screen.y;
 
 				sprite.lastRenderPosition = this._graphics.sprite(
+					spriteScale,
 					this._graphics.width,
 					this.height,
 					this.roadWidth,
 					sprite.image,
-					spriteScale,
+					coords.p1.screen.scale,
 					spriteX,
 					spriteY,
 					-0.5,
@@ -219,6 +221,7 @@ export class Renderer {
 
 	renderPlayer(camera: Camera, playerZ: number, sprite: any) {
 		this._graphics.sprite(
+			spriteScale,
 			this._graphics.width,
 			this._graphics.height,
 			this.roadWidth,

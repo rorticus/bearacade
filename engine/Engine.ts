@@ -1,10 +1,24 @@
 import { CanvasGraphics } from "./renderer/CanvasGraphics";
 import { Sound } from "./sound/Sound";
-import { Background, Renderer } from "./renderer/Renderer";
+import {Background, Renderer, spriteScale} from "./renderer/Renderer";
 import { Camera, Coordinate } from "./interfaces";
-import { Track } from "./Track";
+import { Sprite, Track } from "./Track";
 import { Keyboard } from "./input/Keyboard";
-import { player } from "../old-client/src/Assets";
+
+function overlap(
+	x1: number,
+	w1: number,
+	x2: number,
+	w2: number,
+	percent: number = 1
+) {
+	const half = percent / 2;
+	const min1 = x1 - w1 * half;
+	const max1 = x1 + w1 * half;
+	const min2 = x2 - w2 * half;
+	const max2 = x2 + w2 * half;
+	return !(max1 < min2 || min1 > max2);
+}
 
 export class Engine {
 	sound: Sound;
@@ -31,6 +45,7 @@ export class Engine {
 	speed = 0;
 	centrifugal = 0.3;
 	playerSprite: any;
+	onCollision: (sprite: Sprite) => void | undefined;
 
 	constructor(mountPoint: HTMLCanvasElement) {
 		const context = mountPoint.getContext("2d");
@@ -67,29 +82,13 @@ export class Engine {
 		const type = segment.type;
 		const speedPercent =
 			this.speed / (offRoad ? type.offRoadMaxSpeed : type.onRoadMaxSpeed);
-		// const dx = deltaInSeconds * 2 * speedPercent;
+		const playerW = (this.playerSprite ? this.playerSprite.width : 0) * spriteScale;
 
 		this._gameTime += deltaInSeconds;
 		this._segmentCurve = segment.curve;
 		this._backgroundOffset = this._segmentCurve * speedPercent;
 
 		this.position.z = this.position.z + deltaInSeconds * this.speed;
-
-		// if (this.keyboard.leftKey) {
-		//     this.position.x -= dx;
-		// } else if (this.keyboard.rightKey) {
-		//     this.position.x += dx;
-		// }
-		//
-		// this.position.x -= dx * speedPercent * this._segmentCurve * this.centrifugal;
-		//
-		// if (this.keyboard.upKey) {
-		//     this.speed += type.onRoadAccel * deltaInSeconds;
-		// } else if (this.keyboard.downKey) {
-		//     this.speed += type.onRoadBreaking * deltaInSeconds;
-		// } else {
-		//     this.speed += type.onRoadDecel * deltaInSeconds;
-		// }
 
 		if (offRoad && this.speed > type.offRoadMaxSpeed) {
 			this.speed += type.offRoadDecel * deltaInSeconds;
@@ -107,6 +106,18 @@ export class Engine {
 		if (this.position.x > 2) {
 			this.position.x = 2;
 		}
+
+		segment.sprites.forEach(sprite => {
+			if (sprite.hidden) {
+				return;
+			}
+			// get the player sprite bounds
+			const spriteWidth = sprite.image.width * spriteScale;
+
+			if (overlap(this.position.x, playerW, sprite.offset, spriteWidth)) {
+				this.onCollision && this.onCollision(sprite);
+			}
+		});
 	}
 
 	render() {

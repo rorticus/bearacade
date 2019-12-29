@@ -1,9 +1,10 @@
 import { Engine } from "../../../engine/Engine";
 import { Server } from "./Server";
 import { Assets } from "./Assets";
-import { RoadType } from "../../../engine/Track";
+import { Sprite } from "../../../engine/Track";
 import { Level } from "./levels/Level";
 import { Mountains } from "./levels/Mountains";
+import { SpriteFlag } from "./interfaces";
 
 export interface GameOptions {
 	mountPoint: HTMLCanvasElement;
@@ -23,6 +24,7 @@ export class Game {
 	private _lane = 0;
 	private _leftKey = false;
 	private _rightKey = false;
+	private _isDriving = false;
 
 	constructor({ mountPoint, clientId }: GameOptions) {
 		this._engine = new Engine(mountPoint);
@@ -49,8 +51,20 @@ export class Game {
 
 		await this.preload();
 
+		this._isDriving = true;
+
 		this._engine.applyBackgrounds(this._level.getBackgrounds());
-		this._engine.playerSprite = this._assets.getImage('truck');
+		this._engine.playerSprite = this._assets.getImage("truck");
+		this._engine.onCollision = (sprite: Sprite) => {
+			if (this._isDriving) {
+				if ((sprite.flags & SpriteFlag.Solid) === SpriteFlag.Solid) {
+					// trigger the explosion animation
+					// pause the game
+					this._isDriving = false;
+					// end game
+				}
+			}
+		};
 
 		this._level.generateTrack(this._engine.track);
 		this._engine.start();
@@ -81,35 +95,39 @@ export class Game {
 	private _update(deltaInSeconds: number) {
 		this._engine.update(deltaInSeconds);
 
-		if (this._engine.keyboard.leftKey && !this._leftKey) {
-			this._leftKey = true;
-			this._lane = Math.max(-1, this._lane - 1);
-		} else if (!this._engine.keyboard.leftKey && this._leftKey) {
-			this._leftKey = false;
+		if (this._isDriving) {
+			if (this._engine.keyboard.leftKey && !this._leftKey) {
+				this._leftKey = true;
+				this._lane = Math.max(-1, this._lane - 1);
+			} else if (!this._engine.keyboard.leftKey && this._leftKey) {
+				this._leftKey = false;
+			}
+
+			if (this._engine.keyboard.rightKey && !this._rightKey) {
+				this._rightKey = true;
+				this._lane = Math.min(1, this._lane + 1);
+			} else if (!this._engine.keyboard.rightKey && this._rightKey) {
+				this._rightKey = false;
+			}
+
+			const targetX = lanes[this._lane + 1];
+
+			if (this._engine.position.x < targetX) {
+				this._engine.position.x = Math.min(
+					this._engine.position.x + 0.1,
+					targetX
+				);
+			} else if (this._engine.position.x > targetX) {
+				this._engine.position.x = Math.max(
+					this._engine.position.x - 0.1,
+					targetX
+				);
+			}
+
+			this._engine.speed = this._engine.renderer.segmentLength * 15;
+		} else {
+			this._engine.speed *= 0.98;
 		}
-
-		if (this._engine.keyboard.rightKey && !this._rightKey) {
-			this._rightKey = true;
-			this._lane = Math.min(1, this._lane + 1);
-		} else if (!this._engine.keyboard.rightKey && this._rightKey) {
-			this._rightKey = false;
-		}
-
-		const targetX = lanes[this._lane + 1];
-
-		if (this._engine.position.x < targetX) {
-			this._engine.position.x = Math.min(
-				this._engine.position.x + 0.1,
-				targetX
-			);
-		} else if (this._engine.position.x > targetX) {
-			this._engine.position.x = Math.max(
-				this._engine.position.x - 0.1,
-				targetX
-			);
-		}
-
-		this._engine.speed = this._engine.renderer.segmentLength * 15;
 
 		const playerSegment = this._engine.track.findSegment(
 			this._engine.position.z

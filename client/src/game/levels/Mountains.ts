@@ -3,6 +3,7 @@ import { streetRoad } from "./Roads";
 import { Level } from "./Level";
 import { Assets } from "../Assets";
 import { arrayChoice, chance, choice } from "../helpers";
+import {SpriteFlag} from "../interfaces";
 
 export class Mountains implements Level {
 	constructor(private assets: Assets) {}
@@ -76,22 +77,25 @@ export class Mountains implements Level {
 			if (chance(0.08)) {
 				const side = arrayChoice([-0.66, 33], [0, 33], [0.66, 33]);
 
-				track.addStaticSprite(
+				const sprite = track.addStaticSprite(
 					z,
 					side,
 					-1,
 					this.assets.getImage('oilDrum')
 				);
+				sprite.flags = SpriteFlag.Solid;
 			}
 
 			if(chance(0.1)) {
 				const side = arrayChoice([-0.66, 33], [0, 33], [0.66, 33]);
-				track.addStaticSprite(
+				const sprite = track.addStaticSprite(
 					z,
 					side,
 					-1,
 					this.assets.getImage('bearUpright')
 				);
+
+				sprite.flags = SpriteFlag.Bear;
 			}
 		}
 	}
