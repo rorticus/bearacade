@@ -83,6 +83,16 @@ export class Mountains implements Level {
 					this.assets.getImage('oilDrum')
 				);
 			}
+
+			if(chance(0.1)) {
+				const side = arrayChoice([-0.66, 33], [0, 33], [0.66, 33]);
+				track.addStaticSprite(
+					z,
+					side,
+					-1,
+					this.assets.getImage('bearUpright')
+				);
+			}
 		}
 	}
 
