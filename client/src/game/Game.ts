@@ -61,6 +61,7 @@ export class Game {
 					// trigger the explosion animation
 					// pause the game
 					this._isDriving = false;
+					this._engine.playerSprite = this._assets.getImage('truckWreck');
 					// end game
 				}
 			}

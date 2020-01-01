@@ -9,6 +9,7 @@ const images: Record<string, string> = {
 	obstacle: require('./assets/obstacle.png'),
 	oilDrum: require('./assets/oil-drum.png'),
 	truck: require('./assets/truck.png'),
+	truckWreck: require('./assets/truck-wreck.gif'),
 	bearUpright: require('./assets/bear-upright.png')
 };
 
