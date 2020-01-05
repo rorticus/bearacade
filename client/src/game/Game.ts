@@ -63,6 +63,8 @@ export class Game {
 					this._isDriving = false;
 					this._engine.playerSprite = this._assets.getImage('truckWreck');
 					// end game
+				} else if((sprite.flags & SpriteFlag.Bear) === SpriteFlag.Bear) {
+					sprite.image = this._assets.getImage('bearUprightCarnage');
 				}
 			}
 		};
