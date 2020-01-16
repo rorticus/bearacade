@@ -1,9 +1,10 @@
 import { CanvasGraphics } from "./renderer/CanvasGraphics";
 import { Sound } from "./sound/Sound";
-import {Background, Renderer, spriteScale} from "./renderer/Renderer";
-import { Camera, Coordinate } from "./interfaces";
+import { Background, Renderer, spriteScale } from "./renderer/Renderer";
+import { Camera, Coordinate, Menu, MenuGraphics } from "./interfaces";
 import { Sprite, Track } from "./Track";
 import { Keyboard } from "./input/Keyboard";
+import { CanvasMenuGraphics } from "./renderer/CanvasMenuGraphics";
 
 function overlap(
 	x1: number,
@@ -24,6 +25,8 @@ export class Engine {
 	sound: Sound;
 	renderer: Renderer;
 	keyboard: Keyboard;
+	menuGraphics: MenuGraphics;
+	menus: Menu[] = [];
 
 	track: Track = new Track();
 
@@ -59,8 +62,10 @@ export class Engine {
 				height: mountPoint.height
 			})
 		);
+
 		this.keyboard = new Keyboard();
 		this.sound = new Sound();
+		this.menuGraphics = new CanvasMenuGraphics(context);
 	}
 
 	start() {
@@ -72,7 +77,9 @@ export class Engine {
 	}
 
 	update(deltaInSeconds: number) {
-		if (this._paused) {
+		this.menus.forEach(menu => menu.update && menu.update(deltaInSeconds));
+
+		if (this._paused || this.menus.length) {
 			return;
 		}
 
@@ -82,7 +89,8 @@ export class Engine {
 		const type = segment.type;
 		const speedPercent =
 			this.speed / (offRoad ? type.offRoadMaxSpeed : type.onRoadMaxSpeed);
-		const playerW = (this.playerSprite ? this.playerSprite.width : 0) * spriteScale;
+		const playerW =
+			(this.playerSprite ? this.playerSprite.width : 0) * spriteScale;
 
 		this._gameTime += deltaInSeconds;
 		this._segmentCurve = segment.curve;
@@ -139,6 +147,22 @@ export class Engine {
 				this._playerZ,
 				this.playerSprite
 			);
+		}
+
+		this.menus.forEach(menu => menu.render(this.menuGraphics));
+	}
+
+	addMenu(menu: Menu) {
+		this.menus.push(menu);
+
+		menu.initialize && menu.initialize(this);
+	}
+
+	removeMenu(menu?: Menu) {
+		if (menu) {
+			this.menus = this.menus.filter(m => m === menu);
+		} else {
+			this.menus.pop();
 		}
 	}
 }

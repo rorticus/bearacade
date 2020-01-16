@@ -5,6 +5,7 @@ import { Sprite } from "../../../engine/Track";
 import { Level } from "./levels/Level";
 import { Mountains } from "./levels/Mountains";
 import { SpriteFlag } from "./interfaces";
+import {MainMenu} from "./menus/MainMenu";
 
 export interface GameOptions {
 	mountPoint: HTMLCanvasElement;
@@ -50,6 +51,8 @@ export class Game {
 		}
 
 		await this.preload();
+
+		this._engine.addMenu(new MainMenu());
 
 		this._isDriving = true;
 
