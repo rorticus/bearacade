@@ -1,4 +1,4 @@
-import {Engine} from "./Engine";
+import { Engine } from "./Engine";
 
 export interface Asset {
 	name: string;
@@ -23,8 +23,33 @@ export interface Coordinate {
 	z: number;
 }
 
+export interface CharacterPlacement {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	xAdvance: number;
+	xOffset: number;
+	yOffset: number;
+}
+
+export interface FontDefinition {
+	imageName: string;
+	image?: CanvasImageSource;
+	definition: string;
+	characterInfo?: Record<string, CharacterPlacement>;
+}
+
 export interface MenuGraphics {
-	rect(x: number, y: number, width: number, height: number, color: string): void;
+	rect(
+		x: number,
+		y: number,
+		width: number,
+		height: number,
+		color: string
+	): void;
+	text(font: FontDefinition, text: string, x: number, y: number): void;
+	textDimensions(font: FontDefinition, text: string): { width: number; height: number };
 }
 
 export interface Menu {

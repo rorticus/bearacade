@@ -52,7 +52,7 @@ export class Game {
 
 		await this.preload();
 
-		this._engine.addMenu(new MainMenu());
+		this._engine.addMenu(new MainMenu(this._assets));
 
 		this._isDriving = true;
 

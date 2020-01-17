@@ -45,6 +45,17 @@ html, body {
                 use: [
                     'file-loader'
                 ]
+            },
+            {
+                test: /\.(fnt)/,
+                use: [
+                    {
+                        loader: 'raw-loader',
+                        options: {
+                            esModule: false
+                        }
+                    }
+                ]
             }
         ]
     },
