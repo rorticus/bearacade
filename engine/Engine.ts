@@ -1,10 +1,10 @@
 import { CanvasGraphics } from "./renderer/CanvasGraphics";
 import { Sound } from "./sound/Sound";
 import { Background, Renderer, spriteScale } from "./renderer/Renderer";
-import { Camera, Coordinate, Menu, MenuGraphics } from "./interfaces";
+import { Camera, Coordinate, Menu, Graphics2D, Layer } from "./interfaces";
 import { Sprite, Track } from "./Track";
 import { Keyboard } from "./input/Keyboard";
-import { CanvasMenuGraphics } from "./renderer/CanvasMenuGraphics";
+import { CanvasGraphics2D } from "./renderer/CanvasGraphics2D";
 
 function overlap(
 	x1: number,
@@ -25,8 +25,9 @@ export class Engine {
 	sound: Sound;
 	renderer: Renderer;
 	keyboard: Keyboard;
-	menuGraphics: MenuGraphics;
+	graphics2d: Graphics2D;
 	menus: Menu[] = [];
+	layers: Layer[] = [];
 
 	track: Track = new Track();
 
@@ -65,11 +66,15 @@ export class Engine {
 
 		this.keyboard = new Keyboard();
 		this.sound = new Sound();
-		this.menuGraphics = new CanvasMenuGraphics(context);
+		this.graphics2d = new CanvasGraphics2D(context);
 	}
 
 	start() {
 		this._paused = false;
+	}
+
+	isPaused() {
+		return this._paused;
 	}
 
 	applyBackgrounds(backgrounds: Background[]) {
@@ -129,6 +134,11 @@ export class Engine {
 	}
 
 	render() {
+		if(this.menus.length) {
+			this.menus.forEach(menu => menu.render(this.graphics2d));
+			return;
+		}
+
 		// background
 		this.renderer.renderBackground(this._backgroundOffset);
 
@@ -149,7 +159,7 @@ export class Engine {
 			);
 		}
 
-		this.menus.forEach(menu => menu.render(this.menuGraphics));
+		this.layers.forEach(layer => layer.render(this.graphics2d));
 	}
 
 	addMenu(menu: Menu) {
@@ -163,6 +173,20 @@ export class Engine {
 			this.menus = this.menus.filter(m => m === menu);
 		} else {
 			this.menus.pop();
+		}
+	}
+
+	addLayer(layer: Layer) {
+		this.layers.push(layer);
+
+		layer.initialize && layer.initialize(this);
+	}
+
+	removeLayer(layer?: Layer) {
+		if (layer) {
+			this.layers = this.layers.filter(m => m === layer);
+		} else {
+			this.layers.pop();
 		}
 	}
 }

@@ -1,6 +1,6 @@
-import { FontDefinition, MenuGraphics } from "../interfaces";
+import { FontDefinition, Graphics2D } from "../interfaces";
 
-export class CanvasMenuGraphics implements MenuGraphics {
+export class CanvasGraphics2D implements Graphics2D {
 	constructor(private _context: CanvasRenderingContext2D) {
 		_context.imageSmoothingEnabled = false;
 	}

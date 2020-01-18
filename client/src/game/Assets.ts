@@ -24,8 +24,6 @@ const fonts: Record<string, FontDefinition> = {
 	}
 };
 
-console.log(fonts);
-
 export class Assets {
 	private _images = new Map<string, CanvasImageSource>();
 

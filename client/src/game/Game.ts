@@ -5,7 +5,8 @@ import { Sprite } from "../../../engine/Track";
 import { Level } from "./levels/Level";
 import { Mountains } from "./levels/Mountains";
 import { SpriteFlag } from "./interfaces";
-import {MainMenu} from "./menus/MainMenu";
+import { MainMenu } from "./menus/MainMenu";
+import { ScoreLayer } from "./layers/ScoreLayer";
 
 export interface GameOptions {
 	mountPoint: HTMLCanvasElement;
@@ -26,6 +27,9 @@ export class Game {
 	private _leftKey = false;
 	private _rightKey = false;
 	private _isDriving = false;
+
+	private _scoreLayer: ScoreLayer;
+	private _score = 0;
 
 	constructor({ mountPoint, clientId }: GameOptions) {
 		this._engine = new Engine(mountPoint);
@@ -52,7 +56,8 @@ export class Game {
 
 		await this.preload();
 
-		this._engine.addMenu(new MainMenu(this._assets));
+		this._scoreLayer = new ScoreLayer(this._assets);
+		this._engine.addLayer(this._scoreLayer);
 
 		this._isDriving = true;
 
@@ -64,10 +69,22 @@ export class Game {
 					// trigger the explosion animation
 					// pause the game
 					this._isDriving = false;
-					this._engine.playerSprite = this._assets.getImage('truckWreck');
+					this._engine.playerSprite = this._assets.getImage(
+						"truckWreck"
+					);
 					// end game
-				} else if((sprite.flags & SpriteFlag.Bear) === SpriteFlag.Bear) {
-					sprite.image = this._assets.getImage('bearUprightCarnage');
+				} else if (
+					(sprite.flags & SpriteFlag.Bear) ===
+					SpriteFlag.Bear
+				) {
+					if (!sprite.data) {
+						sprite.image = this._assets.getImage(
+							"bearUprightCarnage"
+						);
+						sprite.data = true;
+						this._score += 1000;
+						this._scoreLayer.score = this._score;
+					}
 				}
 			}
 		};
@@ -101,6 +118,10 @@ export class Game {
 	private _update(deltaInSeconds: number) {
 		this._engine.update(deltaInSeconds);
 
+		if (this._engine.isPaused()) {
+			return;
+		}
+
 		if (this._isDriving) {
 			if (this._engine.keyboard.leftKey && !this._leftKey) {
 				this._leftKey = true;
@@ -120,12 +141,12 @@ export class Game {
 
 			if (this._engine.position.x < targetX) {
 				this._engine.position.x = Math.min(
-					this._engine.position.x + 0.1,
+					this._engine.position.x + 0.025,
 					targetX
 				);
 			} else if (this._engine.position.x > targetX) {
 				this._engine.position.x = Math.max(
-					this._engine.position.x - 0.1,
+					this._engine.position.x - 0.025,
 					targetX
 				);
 			}

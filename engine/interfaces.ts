@@ -40,7 +40,7 @@ export interface FontDefinition {
 	characterInfo?: Record<string, CharacterPlacement>;
 }
 
-export interface MenuGraphics {
+export interface Graphics2D {
 	rect(
 		x: number,
 		y: number,
@@ -52,9 +52,10 @@ export interface MenuGraphics {
 	textDimensions(font: FontDefinition, text: string): { width: number; height: number };
 }
 
-export interface Menu {
+export interface Layer {
 	initialize?(engine: Engine): void;
 	update?(deltaInSeconds: number): void;
-	render(graphics: MenuGraphics): void;
-	isFullScreen?: boolean;
+	render(graphics: Graphics2D): void;
 }
+
+export type Menu = Layer;
