@@ -18,7 +18,7 @@ const images: Record<string, string> = {
 	mainMenu: require("./assets/main-menu.png"),
 	pressToStart: require("./assets/press-to-start.png"),
 	highScoreMenu: require("./assets/highscore-menu.png"),
-	furore: require('./assets/furore.png')
+	furore: require("./assets/furore.png")
 };
 
 const fonts: Record<string, FontDefinition> = {
@@ -32,8 +32,15 @@ const fonts: Record<string, FontDefinition> = {
 	}
 };
 
+const sounds: Record<string, string> = {
+	crash: require("./assets/crash.mp3"),
+	bearHit: require("./assets/bear.mp3"),
+	background: require("./assets/background.mp3")
+};
+
 export class Assets {
 	private _images = new Map<string, CanvasImageSource>();
+	private _sounds = new Map<string, ArrayBuffer>();
 
 	async load(progress: (percent: number) => void) {
 		const imageKeys = Object.keys(images);
@@ -91,6 +98,19 @@ export class Assets {
 
 			f.characterInfo = characterInfo;
 		});
+
+		// load the music
+		await Promise.all(
+			Object.keys(sounds).map(key => {
+				return new Promise(async resolve => {
+					const response = await fetch(sounds[key]);
+					const data = await response.arrayBuffer();
+
+					this._sounds.set(key, data);
+					resolve();
+				});
+			})
+		);
 	}
 
 	getImage(name: keyof typeof images): CanvasImageSource {
@@ -99,5 +119,9 @@ export class Assets {
 
 	getFont(name: keyof typeof fonts): FontDefinition {
 		return fonts[name];
+	}
+
+	getSound(name: keyof typeof sounds): ArrayBuffer {
+		return this._sounds.get(name);
 	}
 }

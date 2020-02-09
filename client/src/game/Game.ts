@@ -66,7 +66,18 @@ export class Game {
 		this._scoreLayer = new ScoreLayer(this._assets);
 		this._engine.addLayer(this._scoreLayer);
 		this._engine.addMenu(
-			new MainMenu(this._assets, this._engine.mouse, () => {
+			new MainMenu(this._assets, this._engine.mouse, async () => {
+				await this._engine.sound.playBackgroundMusic(
+					this._assets.getSound("background")
+				);
+				await this._engine.sound.loadSoundEffect(
+					"bearHit",
+					this._assets.getSound("bearHit")
+				);
+				await this._engine.sound.loadSoundEffect(
+					"crash",
+					this._assets.getSound("crash")
+				);
 				this._engine.removeMenu();
 			})
 		);
@@ -84,6 +95,8 @@ export class Game {
 					this._engine.playerSprite = this._assets.getImage(
 						"truckWreck"
 					);
+					this._engine.sound.playSoundEffect('crash');
+
 					// end game
 					Promise.all([
 						new Promise<HighScore[]>(async resolve => {
@@ -94,6 +107,7 @@ export class Game {
 						}),
 						wait(3000)
 					]).then(([scores]) => {
+						this._engine.sound.stopBackgroundMusic();
 						this._engine.addMenu(
 							new HighScoreMenu(this._assets, scores)
 						);
@@ -109,6 +123,7 @@ export class Game {
 						sprite.data = true;
 						this._score += 350;
 						this._scoreLayer.score = this._score;
+						this._engine.sound.playSoundEffect('bearHit');
 					}
 				}
 			}

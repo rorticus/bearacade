@@ -2,6 +2,10 @@ export interface SoundOptions {
 	defaultGain?: number;
 }
 
+declare namespace window {
+	const webkitAudioContext: typeof AudioContext;
+}
+
 export class Sound {
 	private _audioContext?: AudioContext;
 	private _gainNode?: GainNode;
@@ -12,8 +16,8 @@ export class Sound {
 	/**
 	 * The AudioContext must be created as a result of a user event in order to be created successfully.
 	 */
-	initialize({ defaultGain = 0.25 }: SoundOptions = {}) {
-		this._audioContext = new AudioContext();
+	async initialize({ defaultGain = 1 }: SoundOptions = {}) {
+		this._audioContext = new (window.webkitAudioContext || AudioContext)();
 		this._gainNode = this._audioContext.createGain();
 		this._gainNode.gain.value = defaultGain;
 		this._gainNode.connect(this._audioContext.destination);
@@ -41,7 +45,7 @@ export class Sound {
 	}
 
 	async playBackgroundMusic(data: ArrayBuffer) {
-		if (this._backgroundMusicSource !== null) {
+		if (this._backgroundMusicSource) {
 			this._backgroundMusicSource.stop();
 		}
 

@@ -67,8 +67,8 @@ export class Engine {
 		);
 
 		this.keyboard = new Keyboard();
-		this.mouse = new Mouse();
 		this.sound = new Sound();
+		this.mouse = new Mouse(this.sound);
 		this.graphics2d = new CanvasGraphics2D(context);
 	}
 

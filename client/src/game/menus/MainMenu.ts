@@ -6,6 +6,7 @@ export class MainMenu {
 	private _background: CanvasImageSource;
 	private _pressToStart: CanvasImageSource;
 	private _timer = 0;
+	private _wasDown = false;
 
 	constructor(
 		private _assets: Assets,
@@ -28,6 +29,9 @@ export class MainMenu {
 		this._timer += deltaInSeconds;
 
 		if (this._mouse.mouseDown) {
+			this._wasDown = true;
+		} else if(this._wasDown) {
+			this._wasDown = false;
 			this._ready();
 		}
 	}

@@ -5,7 +5,7 @@ declare const process: any;
 export class Server {
 	clientId: string;
 	connected: boolean = false;
-	authorized: boolean = process.env.NODE_ENV === 'dev';
+	authorized: boolean = process.env.NODE_ENV === 'development';
 	packet: number = 0;
 	protected socket: WebSocket;
 	private callbackMap: { [key: string]: (result: any) => void } = {};
