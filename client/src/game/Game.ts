@@ -4,9 +4,10 @@ import { Assets } from "./Assets";
 import { Sprite } from "../../../engine/Track";
 import { Level } from "./levels/Level";
 import { Mountains } from "./levels/Mountains";
-import { SpriteFlag } from "./interfaces";
+import { HighScore, SpriteFlag } from "./interfaces";
 import { MainMenu } from "./menus/MainMenu";
 import { ScoreLayer } from "./layers/ScoreLayer";
+import { HighScoreMenu } from "./menus/HighScoreMenu";
 
 export interface GameOptions {
 	mountPoint: HTMLCanvasElement;
@@ -14,6 +15,12 @@ export interface GameOptions {
 }
 
 const lanes = [-0.75, 0, 0.75];
+
+function wait(time: number) {
+	return new Promise(resolve => {
+		setTimeout(resolve, time);
+	});
+}
 
 export class Game {
 	private _engine: Engine;
@@ -58,9 +65,11 @@ export class Game {
 
 		this._scoreLayer = new ScoreLayer(this._assets);
 		this._engine.addLayer(this._scoreLayer);
-		this._engine.addMenu(new MainMenu(this._assets, this._engine.mouse, () => {
-			this._engine.removeMenu();
-		}));
+		this._engine.addMenu(
+			new MainMenu(this._assets, this._engine.mouse, () => {
+				this._engine.removeMenu();
+			})
+		);
 
 		this._isDriving = true;
 
@@ -76,6 +85,19 @@ export class Game {
 						"truckWreck"
 					);
 					// end game
+					Promise.all([
+						new Promise<HighScore[]>(async resolve => {
+							const scores = await this._server.postHighScore(
+								this._score
+							);
+							resolve(scores);
+						}),
+						wait(3000)
+					]).then(([scores]) => {
+						this._engine.addMenu(
+							new HighScoreMenu(this._assets, scores)
+						);
+					});
 				} else if (
 					(sprite.flags & SpriteFlag.Bear) ===
 					SpriteFlag.Bear

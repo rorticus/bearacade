@@ -15,14 +15,20 @@ const images: Record<string, string> = {
 	bearUpright: require("./assets/bear-upright.png"),
 	bearUprightCarnage: require("./assets/bear-upright-carnage.gif"),
 	scoreFont: require("./assets/score-font.png"),
-	mainMenu: require('./assets/main-menu.png'),
-	pressToStart: require('./assets/press-to-start.png')
+	mainMenu: require("./assets/main-menu.png"),
+	pressToStart: require("./assets/press-to-start.png"),
+	highScoreMenu: require("./assets/highscore-menu.png"),
+	furore: require('./assets/furore.png')
 };
 
 const fonts: Record<string, FontDefinition> = {
 	score: {
 		imageName: "scoreFont",
 		definition: require("./assets/score-font.fnt")
+	},
+	highScore: {
+		imageName: "furore",
+		definition: require("./assets/furore.fnt")
 	}
 };
 

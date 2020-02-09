@@ -1,3 +1,5 @@
+import { HighScore } from "./interfaces";
+
 declare const NODE_ENV: any;
 
 export class Server {
@@ -45,5 +47,20 @@ export class Server {
 		if (this.connected) {
 			this.socket.send(JSON.stringify({ event, data }));
 		}
+	}
+
+	postHighScore(score: number): Promise<HighScore[]> {
+		return new Promise(resolve => {
+			const packet = ++this.packet;
+			this.callbackMap[packet] = (results: any) => {
+				resolve(results.data);
+			};
+
+			this.sendMessage("high-score", {
+				sessionId: this.clientId,
+				score,
+				packet
+			});
+		});
 	}
 }

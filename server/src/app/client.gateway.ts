@@ -11,6 +11,7 @@ import { SessionService } from "./session.service";
 import { SlackService } from "./slack.service";
 import { Logger } from "@nestjs/common";
 import { Client, Server } from "socket.io";
+import { DatabaseService } from "./database.service";
 
 type ClientWithConnection = Client & { connectionId: string };
 
@@ -23,7 +24,8 @@ export class ClientGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	constructor(
 		private _sessionService: SessionService,
-		private _slackService: SlackService
+		private _slackService: SlackService,
+		private _databaseService: DatabaseService
 	) {
 		this._logger.log("Initialized client gateway");
 	}
@@ -35,6 +37,45 @@ export class ClientGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	) {
 		this._logger.log(`Received connection request for ${sessionId}`);
 		return { event: "play" };
+	}
+
+	@SubscribeMessage("high-score")
+	protected onHighScore(
+		client: ClientWithConnection,
+		{ sessionId, score , packet}: { sessionId: string; score: number, packet: number }
+	) {
+		this._logger.log(`Received high score request for ${sessionId}`);
+		const session = this._sessionService.findSessionByConnectionId(
+			client.connectionId
+		);
+
+		if (session) {
+			this._databaseService.addHighScore({
+				score,
+				name: session.userName
+			});
+
+			return {
+				event: "high-scores",
+				data: this._databaseService.getHighScores(),
+				packet
+			};
+		}
+
+		return {
+			event: "high-scores",
+			data: [
+				{
+					name: 'rory',
+					score: 60000
+				},
+				{
+					name: 'shawn mulligan',
+					score: 908545
+				}
+			],
+			packet
+		};
 	}
 
 	handleConnection(client: ClientWithConnection): any {
