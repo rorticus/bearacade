@@ -1,6 +1,6 @@
 # Bearacade Racing Game
 
-After installing node modules in both the `client/` and `src/` directories, 
+After installing node modules in both the `client/` and `server/` directories, 
 just run `docker-compose up -d` in the main directory and everything should start.
 
 Both the client and the server will auto-restart when code is changed, so simply wait for 
