@@ -1,11 +1,11 @@
 import { HighScore } from "./interfaces";
 
-declare const NODE_ENV: any;
+declare const process: any;
 
 export class Server {
 	clientId: string;
 	connected: boolean = false;
-	authorized: boolean = false;
+	authorized: boolean = process.env.NODE_ENV === 'dev';
 	packet: number = 0;
 	protected socket: WebSocket;
 	private callbackMap: { [key: string]: (result: any) => void } = {};

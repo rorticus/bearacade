@@ -22,6 +22,10 @@ export class DatabaseService {
 	}
 
 	addHighScore(score: HighScore) {
-		this._db.push("/highscores[]", score, true);
+		const scores = [...this.getHighScores(), score].sort((s1, s2) =>
+			s1.score < s2.score ? 1 : -1
+		);
+
+		this._db.push("/highscores", scores.slice(0, 10), true);
 	}
 }

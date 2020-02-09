@@ -15,14 +15,14 @@ export class HighScoreMenu {
 	render(graphics: Graphics2D) {
 		graphics.image(this._background, 0, 0);
 
-		let y = 100;
+		let y = 60;
 		const left = 15;
 		const right = 305;
 
-		for (let i = 0; i < this._scores.length; i++) {
+		for (let i = 0; i < this._scores.length && i < 9; i++) {
 			const score = this._scores[i];
 
-			const leftText = score.name;
+			const leftText = score.name || '';
 			const rightText = String(score.score);
 
 			const dim = graphics.textDimensions(this._font, rightText);

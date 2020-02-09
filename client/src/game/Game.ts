@@ -107,7 +107,7 @@ export class Game {
 							"bearUprightCarnage"
 						);
 						sprite.data = true;
-						this._score += 1000;
+						this._score += 350;
 						this._scoreLayer.score = this._score;
 					}
 				}
@@ -143,7 +143,7 @@ export class Game {
 	private _update(deltaInSeconds: number) {
 		this._engine.update(deltaInSeconds);
 
-		if (this._engine.isPaused()) {
+		if (this._engine.isPaused() || !this._server.authorized) {
 			return;
 		}
 

@@ -36,13 +36,21 @@ export class ClientGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		{ sessionId }: { sessionId: string }
 	) {
 		this._logger.log(`Received connection request for ${sessionId}`);
-		return { event: "play" };
+		const session = this._sessionService.findSessionById(sessionId);
+		if (session) {
+			session.connectionId = client.connectionId;
+			return { event: "play" };
+		}
 	}
 
 	@SubscribeMessage("high-score")
 	protected onHighScore(
 		client: ClientWithConnection,
-		{ sessionId, score , packet}: { sessionId: string; score: number, packet: number }
+		{
+			sessionId,
+			score,
+			packet
+		}: { sessionId: string; score: number; packet: number }
 	) {
 		this._logger.log(`Received high score request for ${sessionId}`);
 		const session = this._sessionService.findSessionByConnectionId(
@@ -66,11 +74,11 @@ export class ClientGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			event: "high-scores",
 			data: [
 				{
-					name: 'rory',
+					name: "rory",
 					score: 60000
 				},
 				{
-					name: 'shawn mulligan',
+					name: "shawn mulligan",
 					score: 908545
 				}
 			],
