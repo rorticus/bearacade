@@ -6,10 +6,18 @@ import { arrayChoice, chance, choice } from "../helpers";
 import {SpriteFlag} from "../interfaces";
 
 export class Mountains implements Level {
+	private _initialized = false;
+
 	constructor(private assets: Assets) {}
 
 	generateTrack(track: Track) {
 		const size = 300;
+
+		if(!this._initialized) {
+			this._initialized = true;
+
+			track.addStraight(25, streetRoad);
+		}
 
 		let curves = [
 			Curve.None,

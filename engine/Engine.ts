@@ -5,6 +5,7 @@ import { Camera, Coordinate, Menu, Graphics2D, Layer } from "./interfaces";
 import { Sprite, Track } from "./Track";
 import { Keyboard } from "./input/Keyboard";
 import { CanvasGraphics2D } from "./renderer/CanvasGraphics2D";
+import {Mouse} from "./input/Mouse";
 
 function overlap(
 	x1: number,
@@ -25,6 +26,7 @@ export class Engine {
 	sound: Sound;
 	renderer: Renderer;
 	keyboard: Keyboard;
+	mouse: Mouse;
 	graphics2d: Graphics2D;
 	menus: Menu[] = [];
 	layers: Layer[] = [];
@@ -65,6 +67,7 @@ export class Engine {
 		);
 
 		this.keyboard = new Keyboard();
+		this.mouse = new Mouse();
 		this.sound = new Sound();
 		this.graphics2d = new CanvasGraphics2D(context);
 	}

@@ -1,6 +1,6 @@
 import { Graphics2D } from "../../../../engine/interfaces";
 import { Assets } from "../Assets";
-import { Keyboard } from "../../../../engine/input/Keyboard";
+import { Mouse } from "../../../../engine/input/Mouse";
 
 export class MainMenu {
 	private _background: CanvasImageSource;
@@ -9,7 +9,7 @@ export class MainMenu {
 
 	constructor(
 		private _assets: Assets,
-		private _keyboard: Keyboard,
+		private _mouse: Mouse,
 		private _ready: () => void
 	) {
 		this._background = _assets.getImage("mainMenu");
@@ -19,7 +19,7 @@ export class MainMenu {
 	render(graphics: Graphics2D) {
 		graphics.image(this._background, 0, 0);
 
-		if (Math.floor(this._timer) % 2) {
+		if (Math.floor(this._timer * 2) % 2) {
 			graphics.image(this._pressToStart, 0, 0);
 		}
 	}
@@ -27,7 +27,7 @@ export class MainMenu {
 	update(deltaInSeconds: number) {
 		this._timer += deltaInSeconds;
 
-		if (this._keyboard.anyKey) {
+		if (this._mouse.mouseDown) {
 			this._ready();
 		}
 	}
