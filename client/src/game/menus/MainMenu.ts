@@ -1,13 +1,34 @@
-import {Graphics2D} from "../../../../engine/interfaces";
-import {Assets} from "../Assets";
+import { Graphics2D } from "../../../../engine/interfaces";
+import { Assets } from "../Assets";
+import { Keyboard } from "../../../../engine/input/Keyboard";
 
 export class MainMenu {
-    constructor(private _assets: Assets) {
-    }
+	private _background: CanvasImageSource;
+	private _pressToStart: CanvasImageSource;
+	private _timer = 0;
 
-    render(graphics: Graphics2D) {
-        graphics.rect(0, 0, 160, 160, '#000000');
+	constructor(
+		private _assets: Assets,
+		private _keyboard: Keyboard,
+		private _ready: () => void
+	) {
+		this._background = _assets.getImage("mainMenu");
+		this._pressToStart = _assets.getImage("pressToStart");
+	}
 
-        graphics.text(this._assets.getFont('score'), '123456', 0, 0);
-    }
+	render(graphics: Graphics2D) {
+		graphics.image(this._background, 0, 0);
+
+		if (Math.floor(this._timer) % 2) {
+			graphics.image(this._pressToStart, 0, 0);
+		}
+	}
+
+	update(deltaInSeconds: number) {
+		this._timer += deltaInSeconds;
+
+		if (this._keyboard.anyKey) {
+			this._ready();
+		}
+	}
 }

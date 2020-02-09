@@ -61,4 +61,8 @@ export class CanvasGraphics2D implements Graphics2D {
 
 		return { height, width };
 	}
+
+	image(image: CanvasImageSource, x: number, y: number) {
+		this._context.drawImage(image, x, y);
+	}
 }

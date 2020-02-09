@@ -50,6 +50,7 @@ export interface Graphics2D {
 	): void;
 	text(font: FontDefinition, text: string, x: number, y: number): void;
 	textDimensions(font: FontDefinition, text: string): { width: number; height: number };
+	image(image: CanvasImageSource, x: number, y: number): void;
 }
 
 export interface Layer {

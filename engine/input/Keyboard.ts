@@ -5,9 +5,12 @@ export class Keyboard {
 	downKey = false;
 	enter = false;
 	escape = false;
+	anyKey = false;
 
 	constructor() {
 		window.addEventListener("keydown", event => {
+			this.anyKey = true;
+
 			if (event.keyCode === 37) {
 				this.leftKey = true;
 			} else if (event.keyCode === 39) {
@@ -24,6 +27,8 @@ export class Keyboard {
 		});
 
 		window.addEventListener("keyup", event => {
+			this.anyKey = false;
+
 			if (event.keyCode === 37) {
 				this.leftKey = false;
 			} else if (event.keyCode === 39) {

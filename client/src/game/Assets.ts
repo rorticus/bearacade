@@ -14,7 +14,9 @@ const images: Record<string, string> = {
 	truckWreck: require("./assets/truck-wreck.gif"),
 	bearUpright: require("./assets/bear-upright.png"),
 	bearUprightCarnage: require("./assets/bear-upright-carnage.gif"),
-	scoreFont: require("./assets/score-font.png")
+	scoreFont: require("./assets/score-font.png"),
+	mainMenu: require('./assets/main-menu.jpg'),
+	pressToStart: require('./assets/press-to-start.png')
 };
 
 const fonts: Record<string, FontDefinition> = {

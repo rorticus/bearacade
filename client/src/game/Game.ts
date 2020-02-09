@@ -58,6 +58,9 @@ export class Game {
 
 		this._scoreLayer = new ScoreLayer(this._assets);
 		this._engine.addLayer(this._scoreLayer);
+		this._engine.addMenu(new MainMenu(this._assets, this._engine.keyboard, () => {
+			this._engine.removeMenu();
+		}));
 
 		this._isDriving = true;
 
