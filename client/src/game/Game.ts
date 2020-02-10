@@ -106,7 +106,7 @@ export class Game {
 							resolve(scores);
 						}),
 						wait(3000)
-					]).then(([scores]) => {
+					]).then(([scores]: any) => {
 						this._engine.sound.stopBackgroundMusic();
 						this._engine.addMenu(
 							new HighScoreMenu(this._assets, scores)
