@@ -65,4 +65,30 @@ export class CanvasGraphics2D implements Graphics2D {
 	image(image: CanvasImageSource, x: number, y: number) {
 		this._context.drawImage(image, x, y);
 	}
+
+	clippedImage(
+		image:
+			| HTMLImageElement
+			| SVGImageElement
+			| HTMLVideoElement
+			| HTMLCanvasElement
+			| ImageBitmap
+			| OffscreenCanvas,
+		x: number,
+		y: number,
+		width: number,
+		height: number
+	): void {
+		this._context.drawImage(
+			image,
+			0,
+			0,
+			width,
+			height,
+			x,
+			y,
+			width,
+			height
+		);
+	}
 }

@@ -51,6 +51,7 @@ export interface Graphics2D {
 	text(font: FontDefinition, text: string, x: number, y: number): void;
 	textDimensions(font: FontDefinition, text: string): { width: number; height: number };
 	image(image: CanvasImageSource, x: number, y: number): void;
+	clippedImage(image: CanvasImageSource, x: number, y: number, width: number, height: number): void;
 }
 
 export interface Layer {

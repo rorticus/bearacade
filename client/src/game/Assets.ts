@@ -18,7 +18,8 @@ const images: Record<string, string> = {
 	mainMenu: require("./assets/main-menu.png"),
 	pressToStart: require("./assets/press-to-start.png"),
 	highScoreMenu: require("./assets/highscore-menu.png"),
-	furore: require("./assets/furore.png")
+	furore: require("./assets/furore.png"),
+	fuelbar: require('./assets/fuelbar.png')
 };
 
 const fonts: Record<string, FontDefinition> = {

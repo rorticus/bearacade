@@ -8,6 +8,7 @@ import { HighScore, SpriteFlag } from "./interfaces";
 import { MainMenu } from "./menus/MainMenu";
 import { ScoreLayer } from "./layers/ScoreLayer";
 import { HighScoreMenu } from "./menus/HighScoreMenu";
+import {FuelLayer} from "./layers/FuelLayer";
 
 export interface GameOptions {
 	mountPoint: HTMLCanvasElement;
@@ -36,7 +37,10 @@ export class Game {
 	private _isDriving = false;
 
 	private _scoreLayer: ScoreLayer;
+	private _fuelLayer: FuelLayer;
+
 	private _score = 0;
+	private _fuel = 100;
 
 	constructor({ mountPoint, clientId }: GameOptions) {
 		this._engine = new Engine(mountPoint);
@@ -64,7 +68,11 @@ export class Game {
 		await this.preload();
 
 		this._scoreLayer = new ScoreLayer(this._assets);
+		this._fuelLayer = new FuelLayer(this._assets);
+
 		this._engine.addLayer(this._scoreLayer);
+		this._engine.addLayer(this._fuelLayer);
+
 		this._engine.addMenu(
 			new MainMenu(this._assets, this._engine.mouse, async () => {
 				await this._engine.sound.playBackgroundMusic(
@@ -156,6 +164,9 @@ export class Game {
 	}
 
 	private _update(deltaInSeconds: number) {
+		this._fuel = Math.max(0, this._fuel - 0.05);
+		this._fuelLayer.fuel = this._fuel;
+
 		this._engine.update(deltaInSeconds);
 
 		if (this._engine.isPaused() || !this._server.authorized) {
