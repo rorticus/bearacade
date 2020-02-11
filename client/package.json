@@ -21,6 +21,5 @@
     "webpack-cli": "^3.3.6",
     "raw-loader": "^4.0.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

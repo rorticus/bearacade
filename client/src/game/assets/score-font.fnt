@@ -1,16 +1,15 @@
-info face="Arial Black" size=48 bold=0 italic=0 charset="" unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=0,0
-common lineHeight=69 base=55 scaleW=192 scaleH=128 pages=1 packed=0
+info face="Outrun future" size=42 bold=0 italic=0 charset="" unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=0,0
+common lineHeight=87 base=63 scaleW=192 scaleH=192 pages=1 packed=0
 page id=0 file="score-font.png"
 chars count=11
-char id=32 x=2 y=122 width=0 height=0 xoffset=0 yoffset=53 xadvance=17 page=0 chnl=0
-char id=48 x=106 y=2 width=32 height=38 xoffset=2 yoffset=17 xadvance=33 page=0 chnl=0
-char id=49 x=72 y=42 width=22 height=38 xoffset=4 yoffset=17 xadvance=33 page=0 chnl=0
-char id=50 x=72 y=2 width=32 height=38 xoffset=2 yoffset=17 xadvance=33 page=0 chnl=0
-char id=51 x=38 y=82 width=32 height=38 xoffset=2 yoffset=17 xadvance=33 page=0 chnl=0
-char id=52 x=2 y=2 width=34 height=38 xoffset=1 yoffset=17 xadvance=33 page=0 chnl=0
-char id=53 x=38 y=42 width=32 height=38 xoffset=2 yoffset=17 xadvance=33 page=0 chnl=0
-char id=54 x=38 y=2 width=32 height=38 xoffset=3 yoffset=17 xadvance=33 page=0 chnl=0
-char id=55 x=140 y=2 width=30 height=38 xoffset=3 yoffset=17 xadvance=33 page=0 chnl=0
-char id=56 x=2 y=82 width=32 height=38 xoffset=2 yoffset=17 xadvance=33 page=0 chnl=0
-char id=57 x=2 y=42 width=32 height=38 xoffset=2 yoffset=17 xadvance=33 page=0 chnl=0
-kernings count=0
+char id=32 x=46 y=60 width=0 height=0 xoffset=0 yoffset=58 xadvance=11 page=0 chnl=0
+char id=49 x=54 y=122 width=32 height=56 xoffset=-3 yoffset=18 xadvance=19 page=0 chnl=0
+char id=50 x=102 y=2 width=42 height=50 xoffset=-3 yoffset=20 xadvance=25 page=0 chnl=0
+char id=51 x=54 y=2 width=46 height=52 xoffset=0 yoffset=18 xadvance=37 page=0 chnl=0
+char id=52 x=2 y=128 width=42 height=58 xoffset=-2 yoffset=18 xadvance=30 page=0 chnl=0
+char id=53 x=2 y=2 width=50 height=56 xoffset=-10 yoffset=18 xadvance=28 page=0 chnl=0
+char id=54 x=92 y=56 width=40 height=54 xoffset=0 yoffset=12 xadvance=29 page=0 chnl=0
+char id=55 x=2 y=60 width=42 height=66 xoffset=-2 yoffset=14 xadvance=27 page=0 chnl=0
+char id=56 x=146 y=2 width=38 height=50 xoffset=-1 yoffset=17 xadvance=30 page=0 chnl=0
+char id=57 x=54 y=56 width=36 height=64 xoffset=0 yoffset=19 xadvance=26 page=0 chnl=0
+char id=48 x=134 y=56 width=34 height=48 xoffset=0 yoffset=19 xadvance=26 page=0 chnl=0
