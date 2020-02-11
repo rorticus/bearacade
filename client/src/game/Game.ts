@@ -164,9 +164,6 @@ export class Game {
 	}
 
 	private _update(deltaInSeconds: number) {
-		this._fuel = Math.max(0, this._fuel - 0.05);
-		this._fuelLayer.fuel = this._fuel;
-
 		this._engine.update(deltaInSeconds);
 
 		if (this._engine.isPaused() || !this._server.authorized) {
@@ -174,6 +171,9 @@ export class Game {
 		}
 
 		if (this._isDriving) {
+			this._fuel = Math.max(0, this._fuel - 0.05);
+			this._fuelLayer.fuel = this._fuel;
+
 			if (this._engine.keyboard.leftKey && !this._leftKey) {
 				this._leftKey = true;
 				this._lane = Math.max(-1, this._lane - 1);
