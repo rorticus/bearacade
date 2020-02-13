@@ -105,21 +105,7 @@ export class Game {
 					);
 					this._engine.sound.playSoundEffect("crash");
 
-					// end game
-					Promise.all([
-						new Promise<HighScore[]>(async resolve => {
-							const scores = await this._server.postHighScore(
-								this._score
-							);
-							resolve(scores);
-						}),
-						wait(3000)
-					]).then(([scores]: any) => {
-						this._engine.sound.stopBackgroundMusic();
-						this._engine.addMenu(
-							new HighScoreMenu(this._assets, scores)
-						);
-					});
+					this.endGame();
 				} else if (
 					(sprite.flags & SpriteFlag.Bear) ===
 					SpriteFlag.Bear
@@ -182,20 +168,7 @@ export class Game {
 			if (this._fuel === 0) {
 				this._isDriving = false;
 
-				Promise.all([
-					new Promise<HighScore[]>(async resolve => {
-						const scores = await this._server.postHighScore(
-							this._score
-						);
-						resolve(scores);
-					}),
-					wait(3000)
-				]).then(([scores]: any) => {
-					this._engine.sound.stopBackgroundMusic();
-					this._engine.addMenu(
-						new HighScoreMenu(this._assets, scores)
-					);
-				});
+				this.endGame();
 			}
 
 			this._fuel = Math.max(0, this._fuel - 0.05);
@@ -243,5 +216,22 @@ export class Game {
 		) {
 			this._level.generateTrack(this._engine.track);
 		}
+	}
+
+	private endGame() {
+		Promise.all([
+			new Promise<HighScore[]>(async resolve => {
+				const scores = await this._server.postHighScore(
+					this._score
+				);
+				resolve(scores);
+			}),
+			wait(3000)
+		]).then(([scores]: any) => {
+			this._engine.sound.stopBackgroundMusic();
+			this._engine.addMenu(
+				new HighScoreMenu(this._assets, scores)
+			);
+		});
 	}
 }

@@ -20,7 +20,8 @@ const images: Record<string, string> = {
 	highScoreMenu: require("./assets/highscore-menu.png"),
 	furore: require("./assets/furore.png"),
 	fuelbar: require('./assets/fuelbar.png'),
-	fuelcan: require('./assets/fuelcan.png')
+	fuelcan: require('./assets/fuelcan.png'),
+	fuelContainer: require('./assets/fuel-container.png')
 };
 
 const fonts: Record<string, FontDefinition> = {

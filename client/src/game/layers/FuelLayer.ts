@@ -7,10 +7,12 @@ import {
 
 export class FuelLayer implements Layer {
 	private _fuelBar: CanvasImageSource;
+	private _fuelContainer: CanvasImageSource;
 	fuel: number = 0;
 
 	constructor(assets: Assets) {
 		this._fuelBar = assets.getImage("fuelbar");
+		this._fuelContainer = assets.getImage("fuelContainer");
 	}
 
 	render(graphics: Graphics2D): void {
@@ -19,6 +21,7 @@ export class FuelLayer implements Layer {
 		const width = Math.floor(300 * (this.fuel / 100));
 		const height = 16;
 
-		graphics.clippedImage(this._fuelBar, left, top, width, height);
+		graphics.image(this._fuelContainer, left, top);
+		graphics.clippedImage(this._fuelBar, left + 3, top + 3, width, height);
 	}
 }

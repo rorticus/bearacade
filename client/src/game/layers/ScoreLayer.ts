@@ -18,6 +18,6 @@ export class ScoreLayer implements Layer {
 
 	    const dimensions = graphics.textDimensions(this._font, scoreText);
 
-	    graphics.text(this._font, scoreText, 320 - 16 - dimensions.width, 0);
+	    graphics.text(this._font, scoreText, 320 - 16 - dimensions.width, 15);
     }
 }
