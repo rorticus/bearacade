@@ -96,14 +96,26 @@ export class Mountains implements Level {
 
 			if(chance(0.1)) {
 				const side = arrayChoice([-0.66, 33], [0, 33], [0.66, 33]);
-				const sprite = track.addStaticSprite(
-					z,
-					side,
-					-1,
-					this.assets.getImage('bearUpright')
-				);
 
-				sprite.flags = SpriteFlag.Bear;
+				if(chance(0.35)) {
+					const sprite = track.addStaticSprite(
+						z,
+						side,
+						-1,
+						this.assets.getImage('fuelcan')
+					);
+
+					sprite.flags = SpriteFlag.Fuel;
+				} else {
+					const sprite = track.addStaticSprite(
+						z,
+						side,
+						-1,
+						this.assets.getImage('bearUpright')
+					);
+
+					sprite.flags = SpriteFlag.Bear;
+				}
 			}
 		}
 	}

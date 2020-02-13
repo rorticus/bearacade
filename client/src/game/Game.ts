@@ -8,7 +8,7 @@ import { HighScore, SpriteFlag } from "./interfaces";
 import { MainMenu } from "./menus/MainMenu";
 import { ScoreLayer } from "./layers/ScoreLayer";
 import { HighScoreMenu } from "./menus/HighScoreMenu";
-import {FuelLayer} from "./layers/FuelLayer";
+import { FuelLayer } from "./layers/FuelLayer";
 
 export interface GameOptions {
 	mountPoint: HTMLCanvasElement;
@@ -103,7 +103,7 @@ export class Game {
 					this._engine.playerSprite = this._assets.getImage(
 						"truckWreck"
 					);
-					this._engine.sound.playSoundEffect('crash');
+					this._engine.sound.playSoundEffect("crash");
 
 					// end game
 					Promise.all([
@@ -131,7 +131,15 @@ export class Game {
 						sprite.data = true;
 						this._score += 350;
 						this._scoreLayer.score = this._score;
-						this._engine.sound.playSoundEffect('bearHit');
+						this._engine.sound.playSoundEffect("bearHit");
+					}
+				} else if (
+					(sprite.flags & SpriteFlag.Fuel) ===
+					SpriteFlag.Fuel
+				) {
+					if (!sprite.data) {
+						sprite.data = 1;
+						this._fuel = Math.min(100, this._fuel + 10);
 					}
 				}
 			}
@@ -171,6 +179,25 @@ export class Game {
 		}
 
 		if (this._isDriving) {
+			if (this._fuel === 0) {
+				this._isDriving = false;
+
+				Promise.all([
+					new Promise<HighScore[]>(async resolve => {
+						const scores = await this._server.postHighScore(
+							this._score
+						);
+						resolve(scores);
+					}),
+					wait(3000)
+				]).then(([scores]: any) => {
+					this._engine.sound.stopBackgroundMusic();
+					this._engine.addMenu(
+						new HighScoreMenu(this._assets, scores)
+					);
+				});
+			}
+
 			this._fuel = Math.max(0, this._fuel - 0.05);
 			this._fuelLayer.fuel = this._fuel;
 
