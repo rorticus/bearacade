@@ -9,6 +9,7 @@ import { MainMenu } from "./menus/MainMenu";
 import { ScoreLayer } from "./layers/ScoreLayer";
 import { HighScoreMenu } from "./menus/HighScoreMenu";
 import { FuelLayer } from "./layers/FuelLayer";
+import { DebugLayer } from "./layers/DebugLayer";
 
 export interface GameOptions {
 	mountPoint: HTMLCanvasElement;
@@ -72,6 +73,7 @@ export class Game {
 
 		this._engine.addLayer(this._scoreLayer);
 		this._engine.addLayer(this._fuelLayer);
+		// this._engine.addLayer(new DebugLayer(this._assets, this._engine));
 
 		this._engine.addMenu(
 			new MainMenu(this._assets, this._engine.mouse, async () => {
@@ -85,6 +87,10 @@ export class Game {
 				await this._engine.sound.loadSoundEffect(
 					"crash",
 					this._assets.getSound("crash")
+				);
+				await this._engine.sound.loadSoundEffect(
+					"fuel",
+					this._assets.getSound("fuel")
 				);
 				this._engine.removeMenu();
 			})
@@ -126,6 +132,8 @@ export class Game {
 					if (!sprite.data) {
 						sprite.data = 1;
 						this._fuel = Math.min(100, this._fuel + 10);
+						sprite.hidden = true;
+						this._engine.sound.playSoundEffect("fuel");
 					}
 				}
 			}
@@ -221,17 +229,13 @@ export class Game {
 	private endGame() {
 		Promise.all([
 			new Promise<HighScore[]>(async resolve => {
-				const scores = await this._server.postHighScore(
-					this._score
-				);
+				const scores = await this._server.postHighScore(this._score);
 				resolve(scores);
 			}),
 			wait(3000)
 		]).then(([scores]: any) => {
 			this._engine.sound.stopBackgroundMusic();
-			this._engine.addMenu(
-				new HighScoreMenu(this._assets, scores)
-			);
+			this._engine.addMenu(new HighScoreMenu(this._assets, scores));
 		});
 	}
 }

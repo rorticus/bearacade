@@ -3,7 +3,7 @@ import { streetRoad } from "./Roads";
 import { Level } from "./Level";
 import { Assets } from "../Assets";
 import { arrayChoice, chance, choice } from "../helpers";
-import {SpriteFlag} from "../interfaces";
+import { SpriteFlag } from "../interfaces";
 
 export class Mountains implements Level {
 	private _initialized = false;
@@ -13,7 +13,7 @@ export class Mountains implements Level {
 	generateTrack(track: Track) {
 		const size = 300;
 
-		if(!this._initialized) {
+		if (!this._initialized) {
 			this._initialized = true;
 
 			track.addStraight(25, streetRoad);
@@ -67,7 +67,7 @@ export class Mountains implements Level {
 		for (let i = 0; i < spriteCount; i++) {
 			const side = chance(0.5) ? -1 : 1;
 
-			const sprite = arrayChoice(['fir1', 50], ['rock', 50]);
+			const sprite = arrayChoice(["fir1", 50], ["rock", 50]);
 
 			track.addStaticSprite(
 				startZ + (endZ - startZ) * Math.random(),
@@ -81,6 +81,8 @@ export class Mountains implements Level {
 		const granularity = 300;
 		const segments = Math.floor((endZ - startZ) / granularity);
 
+		let lastSide;
+
 		for (let i = 0, z = startZ; i < segments; i++, z += granularity) {
 			if (chance(0.08)) {
 				const side = arrayChoice([-0.66, 33], [0, 33], [0.66, 33]);
@@ -89,32 +91,36 @@ export class Mountains implements Level {
 					z,
 					side,
 					-1,
-					this.assets.getImage('oilDrum')
+					this.assets.getImage("oilDrum")
 				);
 				sprite.flags = SpriteFlag.Solid;
+
+				lastSide = side;
 			}
 
-			if(chance(0.1)) {
+			if (chance(0.15)) {
 				const side = arrayChoice([-0.66, 33], [0, 33], [0.66, 33]);
 
-				if(chance(0.35)) {
-					const sprite = track.addStaticSprite(
-						z,
-						side,
-						-1,
-						this.assets.getImage('fuelcan')
-					);
+				if (lastSide !== side) {
+					if (chance(0.25)) {
+						const sprite = track.addStaticSprite(
+							z,
+							side,
+							-1,
+							this.assets.getImage("fuelcan")
+						);
 
-					sprite.flags = SpriteFlag.Fuel;
-				} else {
-					const sprite = track.addStaticSprite(
-						z,
-						side,
-						-1,
-						this.assets.getImage('bearUpright')
-					);
+						sprite.flags = SpriteFlag.Fuel;
+					} else {
+						const sprite = track.addStaticSprite(
+							z,
+							side,
+							-1,
+							this.assets.getImage("bearUpright")
+						);
 
-					sprite.flags = SpriteFlag.Bear;
+						sprite.flags = SpriteFlag.Bear;
+					}
 				}
 			}
 		}

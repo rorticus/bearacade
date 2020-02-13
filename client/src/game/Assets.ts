@@ -38,7 +38,8 @@ const fonts: Record<string, FontDefinition> = {
 const sounds: Record<string, string> = {
 	crash: require("./assets/crash.mp3"),
 	bearHit: require("./assets/bear.mp3"),
-	background: require("./assets/background.mp3")
+	background: require("./assets/background.mp3"),
+	fuel: require('./assets/fuel.mp3')
 };
 
 export class Assets {
