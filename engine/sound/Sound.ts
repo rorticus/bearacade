@@ -16,7 +16,7 @@ export class Sound {
 	/**
 	 * The AudioContext must be created as a result of a user event in order to be created successfully.
 	 */
-	async initialize({ defaultGain = 1 }: SoundOptions = {}) {
+	async initialize({ defaultGain = 0.25 }: SoundOptions = {}) {
 		this._audioContext = new (window.webkitAudioContext || AudioContext)();
 		this._gainNode = this._audioContext.createGain();
 		this._gainNode.gain.value = defaultGain;

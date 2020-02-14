@@ -16,7 +16,7 @@ export interface GameOptions {
 	clientId: string;
 }
 
-const lanes = [-0.75, 0, 0.75];
+const lanes = [-0.70, 0, 0.70];
 
 function wait(time: number) {
 	return new Promise(resolve => {
@@ -200,17 +200,20 @@ export class Game {
 
 			if (this._engine.position.x < targetX) {
 				this._engine.position.x = Math.min(
-					this._engine.position.x + 0.025,
+					this._engine.position.x + 0.04,
 					targetX
 				);
 			} else if (this._engine.position.x > targetX) {
 				this._engine.position.x = Math.max(
-					this._engine.position.x - 0.025,
+					this._engine.position.x - 0.04,
 					targetX
 				);
+			} else {
+				this._leftKey = false;
+				this._rightKey = false;
 			}
 
-			this._engine.speed = this._engine.renderer.segmentLength * 15;
+			this._engine.speed = this._engine.renderer.segmentLength * 35;
 		} else {
 			this._engine.speed *= 0.98;
 		}

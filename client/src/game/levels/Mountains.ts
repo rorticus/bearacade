@@ -78,7 +78,7 @@ export class Mountains implements Level {
 		}
 
 		// divide the new track into segments
-		const granularity = 300;
+		const granularity = 400;
 		const segments = Math.floor((endZ - startZ) / granularity);
 
 		let lastSide;

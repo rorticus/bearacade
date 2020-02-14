@@ -35,9 +35,9 @@ export class Engine {
 
 	private _gameTime = 0;
 	private _camera: Camera = {
-		height: 1000,
+		height: 2000,
 		fieldOfView: 100,
-		depth: 1 / Math.tan(((100 / 2) * Math.PI) / 180)
+		depth: 1 / Math.tan(((80 / 2) * Math.PI) / 180)
 	};
 	private _playerZ: number;
 	private _paused = true;
