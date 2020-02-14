@@ -81,11 +81,16 @@ export class Mountains implements Level {
 		const granularity = 400;
 		const segments = Math.floor((endZ - startZ) / granularity);
 
-		let lastSide;
+		let lastBear = [startZ, startZ, startZ];
+		const bearBuffer = 1000;
 
 		for (let i = 0, z = startZ; i < segments; i++, z += granularity) {
 			if (chance(0.08)) {
 				const side = arrayChoice([-0.66, 33], [0, 33], [0.66, 33]);
+
+				if (z - lastBear[side] < bearBuffer) {
+					continue;
+				}
 
 				const sprite = track.addStaticSprite(
 					z,
@@ -94,33 +99,32 @@ export class Mountains implements Level {
 					this.assets.getImage("oilDrum")
 				);
 				sprite.flags = SpriteFlag.Solid;
-
-				lastSide = side;
+				continue;
 			}
 
 			if (chance(0.15)) {
 				const side = arrayChoice([-0.66, 33], [0, 33], [0.66, 33]);
 
-				if (lastSide !== side) {
-					if (chance(0.25)) {
-						const sprite = track.addStaticSprite(
-							z,
-							side,
-							-1,
-							this.assets.getImage("fuelcan")
-						);
+				lastBear[side] = z;
 
-						sprite.flags = SpriteFlag.Fuel;
-					} else {
-						const sprite = track.addStaticSprite(
-							z,
-							side,
-							-1,
-							this.assets.getImage("bearUpright")
-						);
+				if (chance(0.25)) {
+					const sprite = track.addStaticSprite(
+						z,
+						side,
+						-1,
+						this.assets.getImage("fuelcan")
+					);
 
-						sprite.flags = SpriteFlag.Bear;
-					}
+					sprite.flags = SpriteFlag.Fuel;
+				} else {
+					const sprite = track.addStaticSprite(
+						z,
+						side,
+						-1,
+						this.assets.getImage("bearUpright")
+					);
+
+					sprite.flags = SpriteFlag.Bear;
 				}
 			}
 		}
