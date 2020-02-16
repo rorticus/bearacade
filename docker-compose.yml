@@ -3,6 +3,8 @@ version: '3'
 services:
   server:
     image: docker.rortic.us/bearacade
+    environment:
+      HOST:  http://1aa94714.ngrok.io
     build:
       context: ./
     command: "/usr/local/bin/npm run dev"

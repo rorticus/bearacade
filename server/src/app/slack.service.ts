@@ -3,6 +3,7 @@ import fetch from "node-fetch";
 
 export interface SlackMessage {
 	text: string;
+	response_type: 'in_channel'
 }
 
 @Injectable()

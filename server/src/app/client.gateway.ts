@@ -63,6 +63,11 @@ export class ClientGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				name: session.userName
 			});
 
+			this._slackService.sendMessage(session.responseUrl, {
+				text: `${session.userName} just played Bearacade and scored ${score} points!`,
+				response_type: "in_channel"
+			});
+
 			return {
 				event: "high-scores",
 				data: this._databaseService.getHighScores(),
@@ -98,7 +103,8 @@ export class ClientGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 		if (session) {
 			await this._slackService.sendMessage(session.responseUrl, {
-				text: `${session.userName} decided to _really_ help his teammates out by *quitting*. Thanks ${session.userName}!`
+				text: `${session.userName} decided the pressure was too much and quit Bearacade!. Lame sauce.`,
+				response_type: "in_channel"
 			});
 
 			await this._sessionService.deleteById(session.id);

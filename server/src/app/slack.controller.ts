@@ -3,16 +3,9 @@ import { SessionService } from "./session.service";
 
 const link = process.env.HOST;
 
-@Controller("app")
-export class AppController {
+@Controller("slack")
+export class SlackController {
 	constructor(private _sessionService: SessionService) {}
-
-	@Get("health")
-	health() {
-		return {
-			ok: true
-		};
-	}
 
 	@Post("slash-command")
 	slashCommand(@Body()
@@ -38,7 +31,7 @@ export class AppController {
 			startMessages[Math.floor(Math.random() * startMessages.length)];
 
 		return {
-			text: `${message}<${link}/game#${session.id}|Play here`
+			text: `${message}<${link}/game#${session.id}|Play here>`
 		};
 	}
 }

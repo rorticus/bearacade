@@ -14,20 +14,20 @@ export class ApiController {
 		return this._databaseService.getHighScores();
 	}
 
-	@Post("highscores")
-	addHighscore() {
-		this._databaseService.addHighScore({
-			name: "me",
-			score: 125
-		});
-	}
-
-	@Post("session")
-	async createSession(@Body() data: any) {
-		return this._sessionService.createSession({
-			userId: data.userId,
-			userName: data.userName,
-			responseUrl: data.responseUrl
-		});
-	}
+	// @Post("highscores")
+	// addHighscore() {
+	// 	this._databaseService.addHighScore({
+	// 		name: "me",
+	// 		score: 125
+	// 	});
+	// }
+	//
+	// @Post("session")
+	// async createSession(@Body() data: any) {
+	// 	return this._sessionService.createSession({
+	// 		userId: data.userId,
+	// 		userName: data.userName,
+	// 		responseUrl: data.responseUrl
+	// 	});
+	// }
 }
