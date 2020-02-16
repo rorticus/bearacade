@@ -7,6 +7,7 @@ import { SpriteFlag } from "../interfaces";
 
 export class Mountains implements Level {
 	private _initialized = false;
+	private _lane = 1;
 
 	constructor(private assets: Assets) {}
 
@@ -78,55 +79,75 @@ export class Mountains implements Level {
 		}
 
 		// divide the new track into segments
-		const granularity = 400;
+		const granularity = 1200;
 		const segments = Math.floor((endZ - startZ) / granularity);
 
-		let lastBear = [startZ, startZ, startZ];
-		const bearBuffer = 1000;
+		const left = -0.66;
+		const middle = 0;
+		const right = 0.66;
 
 		for (let i = 0, z = startZ; i < segments; i++, z += granularity) {
-			if (chance(0.08)) {
-				const side = arrayChoice([-0.66, 33], [0, 33], [0.66, 33]);
+			const action = arrayChoice(
+				["straight", 50],
+				["left", 25],
+				["right", 25]
+			);
 
-				if (z - lastBear[side] < bearBuffer) {
-					continue;
-				}
-
-				const sprite = track.addStaticSprite(
-					z,
-					side,
-					-1,
-					this.assets.getImage("oilDrum")
-				);
-				sprite.flags = SpriteFlag.Solid;
-				continue;
+			if (action === "left") {
+				this._lane = Math.max(0, this._lane - 1);
+			} else if (action === "right") {
+				this._lane = Math.min(2, this._lane + 1);
 			}
 
-			if (chance(0.15)) {
-				const side = arrayChoice([-0.66, 33], [0, 33], [0.66, 33]);
+			const available = [];
 
-				lastBear[side] = z;
+			if (this._lane === 0) {
+				available.push(middle);
+				available.push(right);
+			} else if (this._lane === 1) {
+				available.push(left);
+				available.push(right);
+			} else if (this._lane === 2) {
+				available.push(left);
+				available.push(middle);
+			}
 
-				if (chance(0.25)) {
+			available.forEach(x => {
+				const spr = arrayChoice(
+					["bear", 25],
+					["fuel", 5],
+					["oil", 25],
+					["", 100]
+				);
+
+				if (spr === "oil") {
 					const sprite = track.addStaticSprite(
 						z,
-						side,
+						x,
+						-1,
+						this.assets.getImage("oilDrum")
+					);
+					sprite.flags = SpriteFlag.Solid;
+				} else if (spr === "fuel") {
+					const sprite = track.addStaticSprite(
+						z,
+						x,
 						-1,
 						this.assets.getImage("fuelcan")
 					);
 
 					sprite.flags = SpriteFlag.Fuel;
-				} else {
+				} else if (spr === "bear") {
 					const sprite = track.addStaticSprite(
 						z,
-						side,
+						x,
 						-1,
 						this.assets.getImage("bearUpright")
 					);
 
 					sprite.flags = SpriteFlag.Bear;
 				}
-			}
+			});
 		}
 	}
 
