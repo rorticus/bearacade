@@ -68,6 +68,8 @@ export class ClientGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				response_type: "in_channel"
 			});
 
+			this._sessionService.deleteById(session.id);
+
 			return {
 				event: "high-scores",
 				data: this._databaseService.getHighScores(),
