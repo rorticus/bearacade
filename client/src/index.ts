@@ -8,6 +8,7 @@ canvas.height = 240;
 canvas.style.width = "640px";
 canvas.style.height = "480px";
 canvas.style.imageRendering = "optimizeSpeed";
+canvas.id = 'game';
 canvas.classList.add("main");
 
 mountPoint.innerHTML = "";
