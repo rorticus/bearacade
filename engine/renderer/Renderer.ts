@@ -1,7 +1,6 @@
 import { CanvasGraphics } from "./CanvasGraphics";
 import { Camera, Coordinate } from "../interfaces";
 import { Track } from "../Track";
-import { player } from "../../old-client/src/Assets";
 
 export interface Background {
 	asset: CanvasImageSource;

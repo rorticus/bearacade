@@ -2,6 +2,8 @@ import { HighScore } from "./interfaces";
 
 declare const process: any;
 
+const websocketProtocol = process.env.WEBSOCKET_PROTOCOL || 'wss';
+
 export class Server {
 	clientId: string;
 	connected: boolean = false;
@@ -15,7 +17,7 @@ export class Server {
 	}
 
 	connect() {
-		this.socket = new WebSocket(`ws://${document.location.host}/ws`);
+		this.socket = new WebSocket(`${websocketProtocol}://${document.location.host}/ws`);
 		this.socket.addEventListener("open", () => {
 			this.connected = true;
 			this.sendMessage("connect", { sessionId: this.clientId });
