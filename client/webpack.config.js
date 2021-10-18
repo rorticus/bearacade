@@ -1,17 +1,24 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack");
 
 module.exports = {
-    entry: './src/index.ts',
-    plugins: [
-        new HtmlWebpackPlugin({
-            inject: false,
-            template: require('html-webpack-template'),
-            title: 'Bearacade',
-            appMountId: 'app',
-            appMountHtmlSnippet: '<div>App goes here</div>',
-            lang: 'en-US',
-            headHtmlSnippet: `
+	entry: "./src/index.ts",
+	plugins: [
+        new webpack.EnvironmentPlugin({
+            "HOST": "",
+            "DB": "",
+            "WEBSOCKET_PROTOCOL": "ws",
+            "NODE_ENV": "development"
+        }),
+		new HtmlWebpackPlugin({
+			inject: true,
+			template: require("html-webpack-template"),
+			title: "Bearacade",
+			appMountId: "app",
+			appMountHtmlSnippet: "<div>App goes here</div>",
+			lang: "en-US",
+			headHtmlSnippet: `
 <style type="text/css">
 html, body {
     margin: 0;
@@ -38,39 +45,44 @@ html, body {
 }
 </style>
             `
-        })
-    ],
-    module: {
-        rules: [
-            {
-                test: /\.tsx?$/,
-                use: 'ts-loader',
-                exclude: /node_modules/
-            },
-            {
-                test: /\.(png|svg|jpg|gif|mp3)$/,
-                use: [
-                    'file-loader'
-                ]
-            },
-            {
-                test: /\.(fnt)/,
-                use: [
-                    {
-                        loader: 'raw-loader',
-                        options: {
-                            esModule: false
-                        }
-                    }
-                ]
-            }
-        ]
-    },
-    resolve: {
-        extensions: ['.tsx', '.ts', '.js']
-    },
-    output: {
-        filename: '[name].bundle.js',
-        path: path.resolve(__dirname, 'build')
-    }
+		})
+	],
+	module: {
+		rules: [
+			{
+				test: /\.tsx?$/,
+				use: "ts-loader",
+				exclude: /node_modules/
+			},
+			{
+				test: /\.(png|svg|jpg|gif|mp3)$/,
+				use: [
+					{
+						loader: "file-loader",
+						options: {
+							esModule: false
+						}
+					}
+				],
+			},
+			{
+				test: /\.(fnt)/,
+				use: [
+					{
+						loader: "raw-loader",
+						options: {
+							esModule: false
+						}
+					}
+				]
+			}
+		]
+	},
+	resolve: {
+		extensions: [".tsx", ".ts", ".js"]
+	},
+	output: {
+		filename: "[name].bundle.js",
+		path: path.resolve(__dirname, "build")
+	}
 };

@@ -52,10 +52,11 @@ export class Assets {
 		const total = imageKeys.length;
 		let finished = 0;
 
+		console.log("loading images");
 		await Promise.all(
 			imageKeys.map(
 				async key =>
-					new Promise(resolve => {
+					new Promise<void>(resolve => {
 						const img = new Image();
 						img.onload = () => {
 							this._images.set(key, img);
@@ -68,6 +69,7 @@ export class Assets {
 		);
 
 		// load the fonts
+		console.log("loading fonts");
 		Object.keys(fonts).forEach(fontName => {
 			const f = fonts[fontName];
 
@@ -104,9 +106,10 @@ export class Assets {
 		});
 
 		// load the music
+		console.log("loading sound");
 		await Promise.all(
 			Object.keys(sounds).map(key => {
-				return new Promise(async resolve => {
+				return new Promise<void>(async resolve => {
 					const response = await fetch(sounds[key]);
 					const data = await response.arrayBuffer();
 

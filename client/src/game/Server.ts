@@ -2,7 +2,7 @@ import { HighScore } from "./interfaces";
 
 declare const process: any;
 
-const websocketProtocol = process.env.WEBSOCKET_PROTOCOL || 'wss';
+const websocketProtocol = process.env.WEBSOCKET_PROTOCOL;
 
 export class Server {
 	clientId: string;
