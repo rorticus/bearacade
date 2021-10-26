@@ -13,6 +13,7 @@ export class SlackController {
 		user_id: string;
 		user_name: string;
 		response_url: string;
+		team_id: string;
 	}) {
 		const startMessages = [
 			'Ready to "collect" some bears? ',
@@ -24,7 +25,8 @@ export class SlackController {
 		const session = this._sessionService.createSession({
 			userId: body.user_id,
 			userName: body.user_name,
-			responseUrl: body.response_url
+			responseUrl: body.response_url,
+			teamId: body.team_id
 		});
 
 		const message =

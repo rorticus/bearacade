@@ -58,7 +58,7 @@ export class ClientGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		if (session) {
-			this._databaseService.addHighScore({
+			this._databaseService.addHighScore(session.teamId, {
 				score,
 				name: session.userName
 			});
@@ -72,7 +72,7 @@ export class ClientGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 			return {
 				event: "high-scores",
-				data: this._databaseService.getHighScores(),
+				data: this._databaseService.getHighScores(session.teamId),
 				packet
 			};
 		}

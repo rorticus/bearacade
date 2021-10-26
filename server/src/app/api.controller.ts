@@ -9,10 +9,10 @@ export class ApiController {
 		private _sessionService: SessionService
 	) {}
 
-	@Get("highscores")
-	getHighScores() {
-		return this._databaseService.getHighScores();
-	}
+	// @Get("highscores")
+	// getHighScores() {
+	// 	return this._databaseService.getHighScores();
+	// }
 
 	// @Post("highscores")
 	// addHighscore() {

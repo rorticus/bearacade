@@ -5,27 +5,39 @@ import { HighScore } from "../interfaces";
 
 @Injectable()
 export class DatabaseService {
-	private _db: JsonDB;
+	private _dbs: Map<string, JsonDB>;
 
-	constructor() {
-		this._db = new JsonDB(
-			new Config(process.env.DB || "/tmp/bearacade", true, true)
+	private _getDb(teamId: string): JsonDB {
+		if (this._dbs.has(teamId)) {
+			return this._dbs.get(teamId) as JsonDB;
+		}
+
+		const db = new JsonDB(
+			new Config(process.env.DB || "/tmp/bearacade" + teamId, true, true)
 		);
+
+		this._dbs.set(teamId, db);
+
+		return db;
 	}
 
-	getHighScores(): HighScore[] {
+	constructor() {
+		this._dbs = new Map();
+	}
+
+	getHighScores(teamId: string): HighScore[] {
 		try {
-			return this._db.getData("/highscores") || [];
+			return this._getDb(teamId).getData("/highscores") || [];
 		} catch (e) {
 			return [];
 		}
 	}
 
-	addHighScore(score: HighScore) {
-		const scores = [...this.getHighScores(), score].sort((s1, s2) =>
+	addHighScore(teamId: string, score: HighScore) {
+		const scores = [...this.getHighScores(teamId), score].sort((s1, s2) =>
 			s1.score < s2.score ? 1 : -1
 		);
 
-		this._db.push("/highscores", scores.slice(0, 10), true);
+		this._getDb(teamId).push("/highscores", scores.slice(0, 10), true);
 	}
 }

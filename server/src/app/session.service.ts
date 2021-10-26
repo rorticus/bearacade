@@ -7,6 +7,7 @@ export interface Session {
 	userId: string;
 	userName: string;
 	responseUrl: string;
+	teamId: string;
 	connectionId?: string;
 }
 
@@ -14,13 +15,19 @@ export interface CreateSessionOptions {
 	userId: string;
 	userName: string;
 	responseUrl: string;
+	teamId: string;
 }
 
 @Injectable()
 export class SessionService {
 	private _sessions = new Map<string, Session>();
 
-	createSession({ userId, userName, responseUrl }: CreateSessionOptions) {
+	createSession({
+		userId,
+		userName,
+		responseUrl,
+		teamId
+	}: CreateSessionOptions) {
 		const sessionId = uuid();
 
 		const session: Session = {
@@ -28,7 +35,8 @@ export class SessionService {
 			createdDate: new Date(),
 			userId,
 			userName,
-			responseUrl
+			responseUrl,
+			teamId
 		};
 
 		this._sessions.set(sessionId, session);
