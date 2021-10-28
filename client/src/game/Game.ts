@@ -93,10 +93,9 @@ export class Game {
 					this._assets.getSound("fuel")
 				);
 				this._engine.removeMenu();
+				this._isDriving = true;
 			})
 		);
-
-		this._isDriving = true;
 
 		this._engine.applyBackgrounds(this._level.getBackgrounds());
 		this._engine.playerSprite = this._assets.getImage("truck");

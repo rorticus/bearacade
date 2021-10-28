@@ -40,4 +40,14 @@ export class DatabaseService {
 
 		this._getDb(teamId).push("/highscores", scores.slice(0, 10), true);
 	}
+
+	removeHighScore(teamId: string, score: HighScore) {
+		const scores = this.getHighScores(teamId).filter(
+			s => s.score === score.score && s.name === score.name
+		);
+
+		this._getDb(teamId).push("/highscores", scores, true);
+
+		return scores;
+	}
 }
