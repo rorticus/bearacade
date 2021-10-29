@@ -45,6 +45,7 @@ html, body {
     cursor: none;
 }
 </style>
+<meta name="viewport" content="width=320,initial-scale=1" />
             `
 		})
 	],

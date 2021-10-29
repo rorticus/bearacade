@@ -77,7 +77,7 @@ export class Game {
 		// this._engine.addLayer(new DebugLayer(this._assets, this._engine));
 
 		this._engine.addMenu(
-			new MainMenu(this._assets, this._engine.mouse, async () => {
+			new MainMenu(this._assets, this._engine, async () => {
 				await this._engine.sound.playBackgroundMusic(
 					this._assets.getSound("background")
 				);
@@ -199,18 +199,26 @@ export class Game {
 			this._fuel = Math.max(0, this._fuel - 0.05);
 			this._fuelLayer.fuel = this._fuel;
 
-			if (this._engine.keyboard.leftKey && !this._leftKey) {
-				this._leftKey = true;
+			if(this._engine.mouse.mouseLeftClick) {
 				this._lane = Math.max(-1, this._lane - 1);
-			} else if (!this._engine.keyboard.leftKey && this._leftKey) {
-				this._leftKey = false;
+			} else {
+				if (this._engine.keyboard.leftKey && !this._leftKey) {
+					this._leftKey = true;
+					this._lane = Math.max(-1, this._lane - 1);
+				} else if (!this._engine.keyboard.leftKey && this._leftKey) {
+					this._leftKey = false;
+				}
 			}
 
-			if (this._engine.keyboard.rightKey && !this._rightKey) {
-				this._rightKey = true;
+			if(this._engine.mouse.mouseRightClick) {
 				this._lane = Math.min(1, this._lane + 1);
-			} else if (!this._engine.keyboard.rightKey && this._rightKey) {
-				this._rightKey = false;
+			} else {
+				if (this._engine.keyboard.rightKey && !this._rightKey) {
+					this._rightKey = true;
+					this._lane = Math.min(1, this._lane + 1);
+				} else if (!this._engine.keyboard.rightKey && this._rightKey) {
+					this._rightKey = false;
+				}
 			}
 
 			const targetX = lanes[this._lane + 1];

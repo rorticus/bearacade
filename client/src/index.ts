@@ -5,11 +5,37 @@ const canvas = document.createElement("canvas");
 canvas.width = 320;
 canvas.height = 240;
 
-canvas.style.width = "640px";
-canvas.style.height = "480px";
 canvas.style.imageRendering = "optimizeSpeed";
-canvas.id = 'game';
+canvas.id = "game";
 canvas.classList.add("main");
+
+function resizeAndPositionCanvas() {
+	const maxWidth = 640;
+	const maxHeight = 480;
+
+	const windowWidth = window.innerWidth;
+	const windowHeight = window.innerHeight;
+
+	let width = 0;
+	let height = 0;
+
+	if (windowWidth > windowHeight) {
+		height = Math.min(maxHeight, windowHeight);
+		width = (320 / 240) * height;
+	} else {
+		width = Math.min(maxWidth, windowWidth);
+		height = (240 / 320) * width;
+	}
+
+	canvas.style.width = `${Math.floor(width)}px`;
+	canvas.style.height = `${Math.floor(height)}px`;
+}
+
+resizeAndPositionCanvas();
+
+window.addEventListener("resize", () => {
+	resizeAndPositionCanvas();
+});
 
 mountPoint.innerHTML = "";
 mountPoint.appendChild(canvas);

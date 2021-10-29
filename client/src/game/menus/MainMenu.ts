@@ -1,16 +1,15 @@
 import { Graphics2D } from "../../../../engine/interfaces";
 import { Assets } from "../Assets";
-import { Mouse } from "../../../../engine/input/Mouse";
+import { Engine } from "../../../../engine/Engine";
 
 export class MainMenu {
 	private _background: CanvasImageSource;
 	private _pressToStart: CanvasImageSource;
 	private _timer = 0;
-	private _wasDown = false;
 
 	constructor(
 		private _assets: Assets,
-		private _mouse: Mouse,
+		private _engine: Engine,
 		private _ready: () => void
 	) {
 		this._background = _assets.getImage("mainMenu");
@@ -28,10 +27,7 @@ export class MainMenu {
 	update(deltaInSeconds: number) {
 		this._timer += deltaInSeconds;
 
-		if (this._mouse.mouseDown) {
-			this._wasDown = true;
-		} else if(this._wasDown) {
-			this._wasDown = false;
+		if (this._engine.mouse.mouseClick) {
 			this._ready();
 		}
 	}
