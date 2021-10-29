@@ -6,6 +6,15 @@ export class Keyboard {
 	enter = false;
 	escape = false;
 	anyKey = false;
+	space = false;
+
+	lastEnter = false;
+	lastEscape = false;
+	lastSpace = false;
+
+	spaceClick = false;
+	enterClick = false;
+	escapeClick = false;
 
 	constructor() {
 		window.addEventListener("keydown", event => {
@@ -23,6 +32,8 @@ export class Keyboard {
 				this.enter = true;
 			} else if (event.keyCode === 27) {
 				this.escape = true;
+			} else if (event.keyCode === 32) {
+				this.space = true;
 			}
 		});
 
@@ -40,8 +51,20 @@ export class Keyboard {
 			} else if (event.keyCode === 13) {
 				this.enter = false;
 			} else if (event.keyCode === 27) {
-				this.escape = true;
+				this.escape = false;
+			} else if (event.keyCode === 32) {
+				this.space = false;
 			}
 		});
+	}
+
+	update() {
+		this.spaceClick = this.space && !this.lastSpace;
+		this.enterClick = this.enter && !this.lastEnter;
+		this.escapeClick = this.escape && !this.lastEscape;
+
+		this.lastSpace = this.space;
+		this.lastEnter = this.enter;
+		this.lastEscape = this.escape;
 	}
 }

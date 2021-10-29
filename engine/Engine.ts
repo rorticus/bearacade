@@ -5,7 +5,7 @@ import { Camera, Coordinate, Menu, Graphics2D, Layer } from "./interfaces";
 import { Sprite, Track } from "./Track";
 import { Keyboard } from "./input/Keyboard";
 import { CanvasGraphics2D } from "./renderer/CanvasGraphics2D";
-import {Mouse} from "./input/Mouse";
+import { Mouse } from "./input/Mouse";
 
 function overlap(
 	x1: number,
@@ -80,11 +80,18 @@ export class Engine {
 		return this._paused;
 	}
 
+	pause() {
+		this._paused = true;
+	}
+
 	applyBackgrounds(backgrounds: Background[]) {
 		this.renderer.backgrounds = backgrounds;
 	}
 
 	update(deltaInSeconds: number) {
+		this.keyboard.update();
+		this.mouse.update();
+
 		this.menus.forEach(menu => menu.update && menu.update(deltaInSeconds));
 
 		if (this._paused || this.menus.length) {
@@ -137,7 +144,7 @@ export class Engine {
 	}
 
 	render() {
-		if(this.menus.length) {
+		if (this.menus.length) {
 			this.menus.forEach(menu => menu.render(this.graphics2d));
 			return;
 		}

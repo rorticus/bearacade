@@ -10,13 +10,14 @@ import { ScoreLayer } from "./layers/ScoreLayer";
 import { HighScoreMenu } from "./menus/HighScoreMenu";
 import { FuelLayer } from "./layers/FuelLayer";
 import { DebugLayer } from "./layers/DebugLayer";
+import { PauseMenu } from "./menus/PauseMenu";
 
 export interface GameOptions {
 	mountPoint: HTMLCanvasElement;
 	clientId: string;
 }
 
-const lanes = [-0.70, 0, 0.70];
+const lanes = [-0.7, 0, 0.7];
 
 function wait(time: number) {
 	return new Promise(resolve => {
@@ -168,6 +169,23 @@ export class Game {
 		this._engine.update(deltaInSeconds);
 
 		if (this._engine.isPaused() || !this._server.authorized) {
+			return;
+		}
+
+		if (this._isDriving && this._engine.keyboard.escapeClick) {
+			this._engine.pause();
+			this._engine.sound.stopBackgroundMusic();
+
+			this._engine.addMenu(
+				new PauseMenu(this._assets, this._engine, async () => {
+					await this._engine.sound.playBackgroundMusic(
+						this._assets.getSound("background")
+					);
+
+					this._engine.start();
+					this._engine.removeMenu();
+				})
+			);
 			return;
 		}
 
