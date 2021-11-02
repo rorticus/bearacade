@@ -103,6 +103,18 @@ export class Game {
 					"fuel",
 					this._assets.getSound("fuel")
 				);
+				await this._engine.sound.loadSoundEffect(
+					"multibear",
+					this._assets.getSound("multibear")
+				);
+				await this._engine.sound.loadSoundEffect(
+					"ultrabear",
+					this._assets.getSound("ultrabear")
+				);
+				await this._engine.sound.loadSoundEffect(
+					"unbearlevable",
+					this._assets.getSound("unbearlevable")
+				);
 				this._engine.removeMenu();
 				this._isDriving = true;
 			})
@@ -136,6 +148,13 @@ export class Game {
 							this._combo++;
 
 							if (this._combo >= minimumCombo) {
+								if(this._combo === minimumCombo) {
+									this._engine.sound.playSoundEffect('multibear');
+								} else if (this._combo === minimumCombo * 2) {
+									this._engine.sound.playSoundEffect('ultrabear');
+								} else if (this._combo === minimumCombo * 3) {
+									this._engine.sound.playSoundEffect('unbearlevable');
+								}
 								// commenting this out because its a bit too slow
 								// this._comboLayer.addSprite(
 								// 	sprite.lastRenderPosition.x,

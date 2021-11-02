@@ -20,9 +20,9 @@ const images: Record<string, string> = {
 	pressToStart: require("./assets/press-to-start.png"),
 	highScoreMenu: require("./assets/highscore-menu.png"),
 	furore: require("./assets/furore.png"),
-	fuelbar: require('./assets/fuelbar.png'),
-	fuelcan: require('./assets/fuelcan.png'),
-	fuelContainer: require('./assets/fuel-container.png')
+	fuelbar: require("./assets/fuelbar.png"),
+	fuelcan: require("./assets/fuelcan.png"),
+	fuelContainer: require("./assets/fuel-container.png")
 };
 
 const fonts: Record<string, FontDefinition> = {
@@ -40,7 +40,10 @@ const sounds: Record<string, string> = {
 	crash: require("./assets/crash.mp3"),
 	bearHit: require("./assets/bear.mp3"),
 	background: require("./assets/background.mp3"),
-	fuel: require('./assets/fuel.mp3')
+	fuel: require("./assets/fuel.mp3"),
+	multibear: require("./assets/multibear.mp3"),
+	ultrabear: require("./assets/ultrabear.mp3"),
+	unbearlevable: require("./assets/unbearlevable.mp3")
 };
 
 export class Assets {
