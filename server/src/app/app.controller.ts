@@ -15,18 +15,4 @@ export class AppController {
 			ok: true
 		};
 	}
-
-	@Get("remove-highscore")
-	removeHighScore(
-		@Param() teamId: string,
-		@Param() name: string,
-		@Param() score: string
-	) {
-		const scores = this._databaseService.removeHighScore(teamId, {
-			name,
-			score: parseInt(score)
-		});
-
-		return scores;
-	}
 }

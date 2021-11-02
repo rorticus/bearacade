@@ -93,6 +93,7 @@ export class Engine {
 		this.mouse.update();
 
 		this.menus.forEach(menu => menu.update && menu.update(deltaInSeconds));
+		this.layers.forEach(layer => layer.update && layer.update(deltaInSeconds));
 
 		if (this._paused || this.menus.length) {
 			return;

@@ -11,6 +11,10 @@ import { HighScoreMenu } from "./menus/HighScoreMenu";
 import { FuelLayer } from "./layers/FuelLayer";
 import { DebugLayer } from "./layers/DebugLayer";
 import { PauseMenu } from "./menus/PauseMenu";
+import { ComboLayer } from "./layers/ComboLayer";
+
+const comboTimeout = 1.5;
+const minimumCombo = 3;
 
 export interface GameOptions {
 	mountPoint: HTMLCanvasElement;
@@ -40,9 +44,13 @@ export class Game {
 
 	private _scoreLayer: ScoreLayer;
 	private _fuelLayer: FuelLayer;
+	private _comboLayer: ComboLayer;
 
 	private _score = 0;
 	private _fuel = 100;
+
+	private _combo = 0;
+	private _timeSinceBear = 0;
 
 	constructor({ mountPoint, clientId }: GameOptions) {
 		this._engine = new Engine(mountPoint);
@@ -71,7 +79,9 @@ export class Game {
 
 		this._scoreLayer = new ScoreLayer(this._assets);
 		this._fuelLayer = new FuelLayer(this._assets);
+		this._comboLayer = new ComboLayer(this._assets);
 
+		this._engine.addLayer(this._comboLayer);
 		this._engine.addLayer(this._scoreLayer);
 		this._engine.addLayer(this._fuelLayer);
 		// this._engine.addLayer(new DebugLayer(this._assets, this._engine));
@@ -121,9 +131,33 @@ export class Game {
 							"bearUprightCarnage"
 						);
 						sprite.data = true;
-						this._score += 350;
+
+						if (this._timeSinceBear < comboTimeout) {
+							this._combo++;
+
+							if (this._combo >= minimumCombo) {
+								// commenting this out because its a bit too slow
+								// this._comboLayer.addSprite(
+								// 	sprite.lastRenderPosition.x,
+								// 	sprite.lastRenderPosition.y,
+								// 	this._combo
+								// );
+							}
+						} else {
+							this._combo = 0;
+						}
+
+						if (this._combo > minimumCombo) {
+							this._score +=
+								350 + (this._combo - minimumCombo) * 100;
+						} else {
+							this._score += 350;
+						}
+
 						this._scoreLayer.score = this._score;
 						this._engine.sound.playSoundEffect("bearHit");
+
+						this._timeSinceBear = 0;
 					}
 				} else if (
 					(sprite.flags & SpriteFlag.Fuel) ===
@@ -190,6 +224,12 @@ export class Game {
 		}
 
 		if (this._isDriving) {
+			this._timeSinceBear += deltaInSeconds;
+
+			if (this._timeSinceBear >= comboTimeout) {
+				this._combo = 0;
+			}
+
 			if (this._fuel === 0) {
 				this._isDriving = false;
 
@@ -199,7 +239,7 @@ export class Game {
 			this._fuel = Math.max(0, this._fuel - 0.05);
 			this._fuelLayer.fuel = this._fuel;
 
-			if(this._engine.mouse.mouseLeftClick) {
+			if (this._engine.mouse.mouseLeftClick) {
 				this._lane = Math.max(-1, this._lane - 1);
 			} else {
 				if (this._engine.keyboard.leftKey && !this._leftKey) {
@@ -210,7 +250,7 @@ export class Game {
 				}
 			}
 
-			if(this._engine.mouse.mouseRightClick) {
+			if (this._engine.mouse.mouseRightClick) {
 				this._lane = Math.min(1, this._lane + 1);
 			} else {
 				if (this._engine.keyboard.rightKey && !this._rightKey) {
@@ -238,9 +278,18 @@ export class Game {
 				this._rightKey = false;
 			}
 
-			this._engine.speed = this._engine.renderer.segmentLength * 35;
-		} else {
-			this._engine.speed *= 0.98;
+			this._engine.speed *= 0.99;
+
+			if (this._combo >= minimumCombo) {
+				this._engine.speed =
+					this._engine.renderer.segmentLength * 35 +
+					(this._combo - minimumCombo) * 10;
+			} else {
+				this._engine.speed = Math.max(
+					this._engine.renderer.segmentLength * 35,
+					this._engine.speed
+				);
+			}
 		}
 
 		const playerSegment = this._engine.track.findSegment(

@@ -5,29 +5,17 @@ import { HighScore } from "../interfaces";
 
 @Injectable()
 export class DatabaseService {
-	private _dbs: Map<string, JsonDB>;
-
-	private _getDb(teamId: string): JsonDB {
-		if (this._dbs.has(teamId)) {
-			return this._dbs.get(teamId) as JsonDB;
-		}
-
+	private _getDb(): JsonDB {
 		const db = new JsonDB(
-			new Config(process.env.DB || "/tmp/bearacade" + teamId, true, true)
+			new Config(process.env.DB || "/tmp/bearacade", true, true)
 		);
-
-		this._dbs.set(teamId, db);
 
 		return db;
 	}
 
-	constructor() {
-		this._dbs = new Map();
-	}
-
 	getHighScores(teamId: string): HighScore[] {
 		try {
-			return this._getDb(teamId).getData("/highscores") || [];
+			return this._getDb().getData(`/highscores/${teamId}`) || [];
 		} catch (e) {
 			return [];
 		}
@@ -38,15 +26,21 @@ export class DatabaseService {
 			s1.score < s2.score ? 1 : -1
 		);
 
-		this._getDb(teamId).push("/highscores", scores.slice(0, 10), true);
+		const db = this._getDb();
+
+		db.push(`/highscores/${teamId}`, scores.slice(0, 250), true);
+		db.save();
 	}
 
 	removeHighScore(teamId: string, score: HighScore) {
 		const scores = this.getHighScores(teamId).filter(
-			s => s.score === score.score && s.name === score.name
+			s => !(s.score === score.score && s.name === score.name)
 		);
 
-		this._getDb(teamId).push("/highscores", scores, true);
+		const db = this._getDb();
+
+		db.push(`/highscores/${teamId}`, scores, true);
+		db.save();
 
 		return scores;
 	}

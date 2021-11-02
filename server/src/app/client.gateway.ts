@@ -72,7 +72,7 @@ export class ClientGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 			return {
 				event: "high-scores",
-				data: this._databaseService.getHighScores(session.teamId),
+				data: this._databaseService.getHighScores(session.teamId).slice(0, 10),
 				packet
 			};
 		}
