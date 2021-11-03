@@ -1,11 +1,12 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
+import { DatabaseService } from "./database.service";
 import { SessionService } from "./session.service";
 
 const link = process.env.HOST;
 
 @Controller("slack")
 export class SlackController {
-	constructor(private _sessionService: SessionService) {}
+	constructor(private _sessionService: SessionService, private _databaseService: DatabaseService) {}
 
 	@Post("slash-command")
 	slashCommand(@Body()
@@ -34,6 +35,33 @@ export class SlackController {
 
 		return {
 			text: `${message}<${link}/game#${session.id}|Play here>`
+		};
+	}
+	
+	@Post("highscores")
+	getHighScores(@Body()
+	body: {
+		team_id: string;
+	}) {
+		const scores = this._databaseService.getHighScores(body.team_id);
+
+		return {
+			"blocks": [
+				{
+					"type": "section",
+					"text": {
+						"type": "mrkdwn",
+						"text": "*High Scores*"
+					}
+				},
+				{
+					"type": "section",
+					"text": {
+						"type": "mrkdwn",
+						"text": scores.map(score => `- ${score.name}: ${score.score}`).join('\n')
+					}
+				}
+			]
 		};
 	}
 }

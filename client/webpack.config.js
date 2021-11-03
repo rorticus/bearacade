@@ -8,8 +8,8 @@ module.exports = {
         new webpack.EnvironmentPlugin({
             "HOST": "",
             "DB": "",
-            "WEBSOCKET_PROTOCOL": "ws",
-            "NODE_ENV": "development"
+            "WEBSOCKET_PROTOCOL": "wss",
+            "NODE_ENV": "production"
         }),
 		new HtmlWebpackPlugin({
 			inject: true,
