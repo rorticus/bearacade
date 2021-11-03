@@ -17,6 +17,8 @@ export class Mouse {
 	private _initializedSound = false;
 
 	constructor(sound: Sound) {
+		document.addEventListener('pointerdown', () => {}); // in iframe
+
 		window.addEventListener("pointerdown", event => {
 			this.mouseDown = true;
 			const third = window.innerWidth / 3;
