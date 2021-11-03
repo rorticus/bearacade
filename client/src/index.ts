@@ -40,6 +40,29 @@ window.addEventListener("resize", () => {
 mountPoint.innerHTML = "";
 mountPoint.appendChild(canvas);
 
+// if(document.fullscreenEnabled || document.webkitFullscreenEnabled) {
+// 	const fullScreenButton = document.createElement("button");
+// 	fullScreenButton.style.width = "32px";
+// 	fullScreenButton.style.height = "32px";
+// 	fullScreenButton.style.position = "absolute";
+// 	fullScreenButton.style.top = "0";
+// 	fullScreenButton.style.left = "0";
+//
+// 	fullScreenButton.addEventListener("click", (ev) => {
+// 		ev.stopPropagation();
+// 		ev.preventDefault();
+// 		ev.cancelBubble = true;
+//
+// 		if (document.fullscreenElement) {
+// 			document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen();
+// 		} else {
+// 			mountPoint.requestFullscreen ? mountPoint.requestFullscreen() : mountPoint.webkitRequestFullscreen();
+// 		}
+// 	});
+//
+// 	mountPoint.appendChild(fullScreenButton);
+// }
+
 const fpsDisplay = document.createElement("div");
 mountPoint.appendChild(fpsDisplay);
 
