@@ -19,6 +19,7 @@ const minimumCombo = 3;
 export interface GameOptions {
 	mountPoint: HTMLCanvasElement;
 	clientId: string;
+	fpsUpdated?: (fps: number) => void;
 }
 
 const lanes = [-0.7, 0, 0.7];
@@ -51,8 +52,11 @@ export class Game {
 
 	private _combo = 0;
 	private _timeSinceBear = 0;
+	private _fpsUpdated?: (fps: number) => void;
+	private _mouseLeftDown = false;
+	private _mouseRightDown = false;
 
-	constructor({ mountPoint, clientId }: GameOptions) {
+	constructor({ mountPoint, clientId, fpsUpdated }: GameOptions) {
 		this._engine = new Engine(mountPoint);
 		this._server = new Server(clientId);
 		this._assets = new Assets();
@@ -60,6 +64,7 @@ export class Game {
 		this._level = new Mountains(this._assets);
 
 		this._engine.renderer.lanes = 3;
+		this._fpsUpdated = fpsUpdated;
 	}
 
 	async preload() {
@@ -197,6 +202,8 @@ export class Game {
 
 		let last = Date.now();
 		let gdt = 0;
+		let frameCount = 0;
+		let elapsedTime = 0;
 
 		const frame = () => {
 			const now = Date.now();
@@ -210,7 +217,17 @@ export class Game {
 
 			this._engine.render();
 
+			frameCount++;
 			last = now;
+
+			elapsedTime += dt;
+
+			if(elapsedTime > 1) {
+				this._fpsUpdated?.(frameCount);
+				frameCount = 0;
+				elapsedTime -= 1;
+			}
+
 
 			requestAnimationFrame(frame);
 		};
@@ -258,9 +275,14 @@ export class Game {
 			this._fuel = Math.max(0, this._fuel - 0.05);
 			this._fuelLayer.fuel = this._fuel;
 
-			if (this._engine.mouse.mouseLeftClick) {
+			if (this._engine.mouse.mouseLeftDown && !this._mouseLeftDown) {
+				this._mouseLeftDown = true;
 				this._lane = Math.max(-1, this._lane - 1);
 			} else {
+				if(!this._engine.mouse.mouseLeftDown) {
+					this._mouseLeftDown = false;
+				}
+
 				if (this._engine.keyboard.leftKey && !this._leftKey) {
 					this._leftKey = true;
 					this._lane = Math.max(-1, this._lane - 1);
@@ -269,9 +291,13 @@ export class Game {
 				}
 			}
 
-			if (this._engine.mouse.mouseRightClick) {
+			if (this._engine.mouse.mouseRightDown && !this._mouseRightDown) {
 				this._lane = Math.min(1, this._lane + 1);
+				this._mouseRightDown = true;
 			} else {
+				if(!this._engine.mouse.mouseRightDown) {
+					this._mouseRightDown = false;
+				}
 				if (this._engine.keyboard.rightKey && !this._rightKey) {
 					this._rightKey = true;
 					this._lane = Math.min(1, this._lane + 1);

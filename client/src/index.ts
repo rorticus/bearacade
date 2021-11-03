@@ -40,9 +40,13 @@ window.addEventListener("resize", () => {
 mountPoint.innerHTML = "";
 mountPoint.appendChild(canvas);
 
+const fpsDisplay = document.createElement("div");
+mountPoint.appendChild(fpsDisplay);
+
 const game = new Game({
 	mountPoint: canvas,
-	clientId: location.hash.substr(1)
+	clientId: location.hash.substr(1),
+	fpsUpdated: fps => (fpsDisplay.innerText = String(fps))
 });
 
 (async function() {
