@@ -15,6 +15,8 @@ import { ComboLayer } from "./layers/ComboLayer";
 
 const comboTimeout = 1.5;
 const minimumCombo = 3;
+const fuelScoreCost = 25000;
+const fuelScoreBoost = 35;
 
 export interface GameOptions {
 	mountPoint: HTMLCanvasElement;
@@ -120,6 +122,8 @@ export class Game {
 					"unbearlevable",
 					this._assets.getSound("unbearlevable")
 				);
+				await this._engine.sound.loadSoundEffect('useFuel', this._assets.getSound('useFuel'));
+				await this._engine.sound.loadSoundEffect('noScore', this._assets.getSound('noScore'));
 				this._engine.removeMenu();
 				this._isDriving = true;
 			})
@@ -303,6 +307,19 @@ export class Game {
 					this._lane = Math.min(1, this._lane + 1);
 				} else if (!this._engine.keyboard.rightKey && this._rightKey) {
 					this._rightKey = false;
+				}
+			}
+
+			if(this._engine.keyboard.spaceClick) {
+				if(this._score >= fuelScoreCost) {
+					this._score -= fuelScoreCost;
+					this._fuel = Math.min(this._fuel + fuelScoreBoost, 100);
+
+					this._engine.sound.playSoundEffect('useFuel');
+
+					this._scoreLayer.score = this._score;
+				} else {
+					this._engine.sound.playSoundEffect('noScore');
 				}
 			}
 

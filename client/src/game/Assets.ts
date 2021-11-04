@@ -43,7 +43,9 @@ const sounds: Record<string, string> = {
 	fuel: require("./assets/fuel.mp3"),
 	multibear: require("./assets/multibear.mp3"),
 	ultrabear: require("./assets/ultrabear.mp3"),
-	unbearlevable: require("./assets/unbearlevable.mp3")
+	unbearlevable: require("./assets/unbearlevable.mp3"),
+	useFuel: require('./assets/usefuel.mp3'),
+	noScore: require('./assets/noscore.mp3')
 };
 
 export class Assets {
