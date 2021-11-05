@@ -15,7 +15,7 @@ import { ComboLayer } from "./layers/ComboLayer";
 
 const comboTimeout = 1.5;
 const minimumCombo = 3;
-const fuelScoreCost = 25000;
+const fuelScoreCost = 8000;
 const fuelScoreBoost = 35;
 
 export interface GameOptions {
