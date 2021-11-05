@@ -1,11 +1,12 @@
 # Bearacade Racing Game
 
-After installing node modules in both the `client/` and `server/` directories, 
-just run `docker-compose up -d` in the main directory and everything should start.
+## Running Locally
 
-Both the client and the server will auto-restart when code is changed, so simply wait for 
-the builds to finish and refresh your browser. You can see the status of the builds in the
-docker logs.
+1. Install node modules in `client/` and `/server` directories.
+2. In `client/webpack.config.js`, change the `WEBSOCKET_PROTOCOL` to `ws` and the `NODE_ENV` to `development`.
+3. Using node 12, run `npm run dev` from the `client/` directory.
+4. Run `npm run dev` from the server directory.
+5. Open a browser to http://localhost:8000/game/
 
 ## See Also
 
